@@ -1,0 +1,373 @@
+﻿@model IEnumerable<EduAcess.Models.Programme>
+@{
+	ViewBag.Title = "Explore Programmes";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var hasMarks = (bool)ViewBag.HasMarks;
+	var learnerAps = (int)ViewBag.LearnerAps;
+}
+
+<style>
+	body {
+		background-color: #f8f9fa;
+		font-family: 'Inter', -apple-system, sans-serif;
+		color: #1a2733;
+	}
+
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	/* --- Hero --- */
+	.programmes-hero {
+		background: linear-gradient(135deg, #095e54 0%, #0d7a6e 50%, #20c997 100%);
+		color: #fff;
+		padding: 4rem 0 6rem 0;
+		position: relative;
+		overflow: hidden;
+	}
+
+		.programmes-hero::after {
+			content: '';
+			position: absolute;
+			bottom: -50px;
+			right: -50px;
+			width: 400px;
+			height: 400px;
+			background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+			border-radius: 50%;
+		}
+
+		.programmes-hero h1 {
+			font-size: 2.8rem;
+			font-weight: 800;
+			letter-spacing: -1px;
+			margin-bottom: 1rem;
+		}
+
+		.programmes-hero p {
+			font-size: 1.15rem;
+			opacity: 0.9;
+			max-width: 700px;
+		}
+
+	/* --- Filter Card (Floating) --- */
+	.filter-card {
+		background: #fff;
+		border-radius: 1rem;
+		padding: 1.5rem 2rem;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+		margin-top: -3rem;
+		position: relative;
+		z-index: 10;
+	}
+
+		.filter-card select, .filter-card input[type="text"] {
+			width: 100%;
+			padding: 0.6rem 1rem;
+			border: 1px solid #eae7e0;
+			border-radius: 0.5rem;
+			font-size: 0.9rem;
+			background: #f8f9fa;
+			height: 42px;
+		}
+
+		.filter-card label {
+			font-size: 0.75rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #5a6571;
+			margin-bottom: 0.4rem;
+			display: block;
+		}
+
+	/* --- Eligibility Alert --- */
+	.eligibility-alert {
+		background: #f0f7f4;
+		border: 1px solid #cce5e2;
+		border-radius: 0.75rem;
+		padding: 1.25rem 1.5rem;
+		margin-bottom: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+		.eligibility-alert.has-marks {
+			border-left: 5px solid #0d7a6e;
+		}
+
+		.eligibility-alert.no-marks {
+			border-left: 5px solid #f5a623;
+			background: #fff8eb;
+		}
+
+	/* --- Programme Cards --- */
+	.programme-item {
+		transition: opacity 0.2s;
+	}
+
+	.programme-card {
+		background: #fff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		padding: 1.5rem;
+		height: 100%;
+		transition: all 0.2s;
+		display: flex;
+		flex-direction: column;
+		cursor: pointer;
+	}
+
+		.programme-card:hover {
+			border-color: #0d7a6e;
+			box-shadow: 0 10px 30px rgba(13, 122, 110, 0.1);
+			transform: translateY(-3px);
+		}
+
+		.programme-card h5 {
+			font-size: 1.1rem;
+			font-weight: 800;
+			margin-bottom: 0.25rem;
+		}
+
+		.programme-card .institution {
+			color: #0d7a6e;
+			font-weight: 700;
+			font-size: 0.9rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.programme-card .meta {
+			color: #5a6571;
+			font-size: 0.85rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.programme-card .reqs {
+			color: #5a6571;
+			font-size: 0.8rem;
+			margin-bottom: 1rem;
+			flex-grow: 1;
+			line-height: 1.4;
+		}
+
+	/* --- Badges --- */
+	.badge {
+		font-size: 0.7rem;
+		font-weight: 700;
+		padding: 0.35rem 0.7rem;
+		border-radius: 999px;
+		display: inline-block;
+		margin-right: 0.25rem;
+	}
+
+	.badge-field {
+		background: #eef5fc;
+		color: #1f78d1;
+	}
+
+	.badge-eligible {
+		background: #d1e7dd;
+		color: #0f5132;
+	}
+
+	.badge-short {
+		background: #fcebe9;
+		color: #e05545;
+	}
+
+	.badge-no-marks {
+		background: #f8f9fa;
+		color: #5a6571;
+		border: 1px solid #eae7e0;
+	}
+</style>
+
+<!-- Hero Section -->
+<section class="programmes-hero">
+	<div class="container">
+		<h1>Explore Every Opportunity</h1>
+		<p>Browse every university, TVET college, and private qualification in South Africa. Find your path, then check your APS to see if you qualify.</p>
+	</div>
+</section>
+
+<!-- Filter & Search Bar -->
+<div class="container">
+	<div class="filter-card">
+		@using (Html.BeginForm("Index", "Programmes", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+		{
+			<!-- Server-side filters -->
+			<div class="col-md-3">
+				<label>Province</label>
+				@Html.DropDownList("province", new SelectList(ViewBag.ProvinceOptions, ViewBag.Province), "All Provinces", new { @class = "form-control" })
+			</div>
+			<div class="col-md-3">
+				<label>Institution</label>
+				@Html.DropDownList("institution", new SelectList(ViewBag.InstitutionOptions, ViewBag.Institution), "All Institutions", new { @class = "form-control" })
+			</div>
+			<div class="col-md-2">
+				<label>Field</label>
+				@Html.DropDownList("fieldOfStudy", new SelectList(ViewBag.FieldOptions, ViewBag.FieldOfStudy), "All Fields", new { @class = "form-control" })
+			</div>
+			<div class="col-md-2">
+				<label>Qualification</label>
+				@Html.DropDownList("qualificationType", new SelectList(ViewBag.QualificationOptions, ViewBag.QualificationType), "All Types", new { @class = "form-control" })
+			</div>
+			<div class="col-md-2">
+				<button type="submit" class="btn btn-success w-100 fw-bold" style="background: #0d7a6e; height: 42px;">Filter</button>
+			</div>
+		}
+
+		<!-- Live Search Bar -->
+		<div class="row mt-3">
+			<div class="col-md-10">
+				<label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #5a6571; margin-bottom: 0.4rem; display: block;">
+					Search Programmes
+				</label>
+				<input type="text" id="programmeSearch" class="form-control"
+					   placeholder="Try 'Accounting', 'Wits', 'KwaZulu-Natal', 'Diploma'..."
+					   onkeyup="filterProgrammes()" />
+			</div>
+			<div class="col-md-2">
+				<label style="visibility: hidden;">.</label>
+				<button type="button" class="btn btn-outline-secondary w-100" style="height: 42px;"
+						onclick="document.getElementById('programmeSearch').value=''; filterProgrammes();">
+					Clear
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-5">
+
+	<!-- Eligibility Alert -->
+	@if (hasMarks)
+	{
+		<div class="eligibility-alert has-marks">
+			<div>
+				<h5 class="fw-bold mb-1" style="color: #0d7a6e;">Your APS: @learnerAps</h5>
+				<p class="mb-0 text-muted small">We've highlighted which programmes you qualify for based on your current marks.</p>
+			</div>
+			<a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-success btn-sm">Update Marks</a>
+		</div>
+	}
+	else
+	{
+		<div class="eligibility-alert no-marks">
+			<div>
+				<h5 class="fw-bold mb-1" style="color: #856404;">Find out if you qualify</h5>
+				<p class="mb-0 text-muted small">Log in and enter your marks to see custom eligibility badges on every programme.</p>
+			</div>
+			@if (!User.Identity.IsAuthenticated)
+			{
+				<a href="@Url.Action("Register", "Account")" class="btn btn-warning btn-sm text-dark fw-bold">Get Started</a>
+			}
+			else
+			{
+				<a href="@Url.Action("Index", "Dashboard")" class="btn btn-warning btn-sm text-dark fw-bold">Enter Marks</a>
+			}
+		</div>
+	}
+
+	<!-- Programmes Grid -->
+	<div class="row g-4" id="programmesGrid">
+		@if (Model.Any())
+		{
+			foreach (var p in Model)
+			{
+				int required = p.RequiredAps;
+				bool eligible = hasMarks && learnerAps >= required;
+				int diff = required - learnerAps;
+
+				<div class="col-md-6 col-lg-4 programme-item"
+					 data-name="@p.Name.ToLower()"
+					 data-institution="@p.Institution.Name.ToLower()"
+					 data-province="@p.Institution.Province.ToLower()"
+					 data-field="@p.FieldOfStudy.ToLower()"
+					 data-qualification="@p.QualificationType.ToLower()">
+
+					<a href="@Url.Action("Details", "Programmes", new { id = p.Id })" style="text-decoration: none; color: inherit;">
+						<div class="programme-card">
+							<h5>@p.Name</h5>
+							<div class="institution">@p.Institution.Name</div>
+							<div class="meta">@p.Institution.Province · @p.DurationYears years · @p.QualificationType</div>
+
+							<div class="reqs">
+								<strong style="color: #1a2733;">Required APS:</strong> @required<br />
+								@p.RequiredSubjects
+							</div>
+
+							<div>
+								<span class="badge badge-field">@p.FieldOfStudy</span>
+
+								@if (hasMarks)
+								{
+									if (eligible)
+									{
+										<span class="badge badge-eligible">✓ You qualify</span>
+									}
+									else
+									{
+										<span class="badge badge-short">@diff APS short</span>
+									}
+								}
+								else
+								{
+									<span class="badge badge-no-marks">Log in to check</span>
+								}
+							</div>
+						</div>
+					</a>
+				</div>
+			}
+		}
+	</div>
+
+	<!-- "No results" message (shown by JS) -->
+	<div id="noResults" class="text-center py-5" style="display: none;">
+		<h4 class="text-muted">No programmes match your search.</h4>
+		<button class="btn btn-outline-secondary mt-2"
+				onclick="document.getElementById('programmeSearch').value=''; filterProgrammes();">
+			Clear Search
+		</button>
+	</div>
+</div>
+
+<script>
+    function filterProgrammes() {
+        var query = document.getElementById('programmeSearch').value.toLowerCase().trim();
+        var items = document.querySelectorAll('#programmesGrid .programme-item');
+        var visibleCount = 0;
+
+        items.forEach(function (item) {
+            // Fetch the pre-lowercased data from each card
+            var name = item.getAttribute('data-name') || '';
+            var institution = item.getAttribute('data-institution') || '';
+            var province = item.getAttribute('data-province') || '';
+            var field = item.getAttribute('data-field') || '';
+            var qualification = item.getAttribute('data-qualification') || '';
+
+            // Check if query matches any attribute
+            var matches = (name.indexOf(query) > -1)
+                       || (institution.indexOf(query) > -1)
+                       || (province.indexOf(query) > -1)
+                       || (field.indexOf(query) > -1)
+                       || (qualification.indexOf(query) > -1);
+
+            if (query === '' || matches) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show/hide the "no results" message
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+</script>

@@ -1,0 +1,343 @@
+﻿@{
+	ViewBag.Title = "Confirm Your Email";
+}
+
+<style>
+    .body-content {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    body {
+        background-color: #faf9f6;
+        color: #1a2733;
+    }
+
+    .confirm-wrapper {
+        min-height: calc(100vh - 73px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .confirm-card {
+        background: #ffffff;
+        border: 1px solid #eae7e0;
+        border-radius: 1rem;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+        padding: 3rem;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        animation: cardEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @@keyframes cardEnter {
+        from { opacity: 0; transform: translateY(12px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .confirm-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem auto;
+        border-radius: 50%;
+        background: #f0f7f4;
+        border: 2px solid #cce5e2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0d7a6e;
+        animation: iconPop 0.6s ease 0.1s both;
+    }
+
+    @@keyframes iconPop {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confirm-card h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #1a2733;
+        margin-bottom: 0.5rem;
+    }
+
+    .confirm-card p {
+        color: #5a6571;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .code-input {
+        width: 100%;
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: 0.8rem;
+        padding: 1rem;
+        border: 2px solid #cfd6de;
+        border-radius: 0.5rem;
+        background: #fafbfc;
+        color: #1a2733;
+        transition: all 0.2s ease;
+        font-family: 'Courier New', monospace;
+    }
+
+    .code-input:focus {
+        outline: none;
+        border-color: #0d7a6e;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(13, 122, 110, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .btn-confirm {
+        background-color: #0d7a6e;
+        color: white;
+        font-weight: 700;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        width: 100%;
+        font-size: 1rem;
+        margin-top: 1.5rem;
+        transition: background 0.2s, transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-confirm:hover {
+        background-color: #095e54;
+        color: white;
+    }
+
+    .btn-confirm:active {
+        transform: scale(0.98);
+    }
+
+    .btn-confirm.loading {
+        cursor: wait;
+        opacity: 0.85;
+    }
+
+    .btn-spinner {
+        display: none;
+        align-items: center;
+    }
+
+    .btn-confirm.loading .btn-spinner {
+        display: inline-flex;
+    }
+
+    /* Resend Section */
+    .resend-container {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #5a6571;
+    }
+
+    .btn-resend {
+        background: none;
+        border: none;
+        color: #0d7a6e;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        text-decoration: underline;
+        transition: color 0.2s;
+    }
+
+    .btn-resend:hover:not(:disabled) {
+        color: #095e54;
+    }
+
+    .btn-resend:disabled {
+        color: #a0abb5;
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+
+    .resend-success {
+        color: #0d7a6e;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        display: block;
+        animation: fadeUp 0.3s ease;
+    }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Shake animation for wrong code */
+    @@keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+    }
+    .shake {
+        animation: shake 0.4s ease-in-out;
+        border-color: #dc3545 !important;
+    }
+</style>
+
+<div class="confirm-wrapper">
+	<div class="confirm-card">
+
+		<div class="confirm-icon">
+			<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+				<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
+			</svg>
+		</div>
+
+		<h2>Confirm your email</h2>
+		<p>We've sent a 6-digit code to <strong>@ViewBag.Email</strong>.<br />Enter it below to activate your account.</p>
+
+		@using (Html.BeginForm("ConfirmEmailCode", "Account", FormMethod.Post, new { id = "confirmForm" }))
+		{
+			@Html.AntiForgeryToken()
+			@Html.Hidden("email", (string)ViewBag.Email, new { id = "emailValue" })
+
+			<div class="text-danger small mb-3 text-start">
+				@Html.ValidationSummary(true)
+			</div>
+
+			<input type="text"
+				   name="code"
+				   id="codeInput"
+				   class="code-input"
+				   placeholder="------"
+				   maxlength="6"
+				   pattern="[0-9]{6}"
+				   inputmode="numeric"
+				   autocomplete="one-time-code"
+				   autofocus
+				   required />
+
+			<button type="submit" class="btn-confirm" id="submitBtn">
+				<span class="btn-text">Verify &amp; Continue</span>
+				<span class="btn-spinner">
+					<svg width="18" height="18" viewBox="0 0 24 24">
+						<circle cx="12" cy="12" r="10" stroke="white" stroke-width="3"
+								fill="none" stroke-dasharray="50" stroke-dashoffset="20">
+							<animateTransform attributeName="transform" type="rotate"
+											  from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
+						</circle>
+					</svg>
+				</span>
+			</button>
+		}
+
+		<!-- Resend Section -->
+		<div class="resend-container">
+			Didn't receive the code?
+
+			@using (Html.BeginForm("ResendCode", "Account", FormMethod.Post, new { id = "resendForm", style = "display:inline;" }))
+			{
+				@Html.AntiForgeryToken()
+				<input type="hidden" name="email" value="@ViewBag.Email" />
+				<button type="submit" id="resendBtn" class="btn-resend">Resend Code</button>
+			}
+
+			<span id="resendTimer" style="display:none; color: #a0abb5;">(Wait <span id="timerSeconds">30</span>s)</span>
+
+			@if (TempData["Success"] != null)
+			{
+				<div class="resend-success">@TempData["Success"]</div>
+			}
+			@if (TempData["Error"] != null)
+			{
+				<div class="text-danger small mt-2">@TempData["Error"]</div>
+			}
+		</div>
+
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+        (function () {
+            var codeInput = document.getElementById("codeInput");
+            var form = document.getElementById("confirmForm");
+            var submitBtn = document.getElementById("submitBtn");
+
+            var resendBtn = document.getElementById("resendBtn");
+            var resendTimer = document.getElementById("resendTimer");
+            var timerSeconds = document.getElementById("timerSeconds");
+            var resendForm = document.getElementById("resendForm");
+
+            // --- 1. Code Input Logic ---
+            if (codeInput && form) {
+                codeInput.addEventListener("input", function () {
+                    // Force numeric
+                    this.value = this.value.replace(/[^0-9]/g, '');
+
+                    // Auto-submit
+                    if (this.value.length === 6) {
+                        form.submit();
+                    }
+                });
+
+                form.addEventListener("submit", function () {
+                    submitBtn.classList.add("loading");
+                    var text = submitBtn.querySelector(".btn-text");
+                    if (text) { text.textContent = "Verifying…"; }
+                });
+
+                window.addEventListener("load", function () {
+                    var validationSummary = document.querySelector(".validation-summary-errors");
+                    if (validationSummary && validationSummary.innerText.trim() !== "") {
+                        codeInput.classList.add("shake");
+                        codeInput.value = "";
+                        setTimeout(function() { codeInput.classList.remove("shake"); }, 400);
+                    }
+                });
+            }
+
+            // --- 2. Resend Logic (Handles page reloads with localStorage) ---
+            if (resendBtn) {
+                var cooldownKey = 'resendCooldown_' + encodeURIComponent('@ViewBag.Email');
+                var cooldownEnd = localStorage.getItem(cooldownKey);
+
+                function startTimer(seconds) {
+                    resendBtn.style.display = 'none';
+                    resendTimer.style.display = 'inline';
+                    timerSeconds.textContent = seconds;
+
+                    var interval = setInterval(function () {
+                        seconds--;
+                        timerSeconds.textContent = seconds;
+
+                        if (seconds <= 0) {
+                            clearInterval(interval);
+                            resendBtn.style.display = 'inline-block';
+                            resendTimer.style.display = 'none';
+                            localStorage.removeItem(cooldownKey);
+                        }
+                    }, 1000);
+                }
+
+                // Check if a timer is already running from a previous click/reload
+                if (cooldownEnd && Date.now() < cooldownEnd) {
+                    var remaining = Math.ceil((cooldownEnd - Date.now()) / 1000);
+                    startTimer(remaining);
+                }
+
+                // When clicked, save the timestamp and submit the form
+                resendForm.addEventListener("submit", function () {
+                    var expireTime = Date.now() + (30 * 1000);
+                    localStorage.setItem(cooldownKey, expireTime);
+                });
+            }
+        })();
+	</script>
+}

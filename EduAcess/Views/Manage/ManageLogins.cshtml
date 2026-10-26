@@ -1,0 +1,312 @@
+﻿@model EduAcess.Models.ManageLoginsViewModel
+@using Microsoft.Owin.Security
+@{
+	ViewBag.Title = "Manage External Logins";
+}
+
+<style>
+	/* --- Dashboard Global Styling --- */
+	.dashboard-bg {
+		background-color: #f8f9fb;
+		min-height: calc(100vh - 73px);
+		padding: 3rem 0;
+	}
+
+	/* --- Page Header --- */
+	.page-header {
+		background: #ffffff;
+		border-radius: 1rem;
+		padding: 2rem;
+		border: 1px solid #eef1f4;
+		box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+		margin-bottom: 2rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.page-header-icon {
+		width: 56px;
+		height: 56px;
+		background-color: #eef5fc;
+		color: #1f78d1;
+		border-radius: 0.75rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.page-header h2 {
+		font-weight: 800;
+		color: #1a2733;
+		margin-bottom: 0.25rem;
+		font-size: 1.5rem;
+		letter-spacing: -0.5px;
+	}
+
+	.page-header p {
+		color: #5a6571;
+		font-size: 0.95rem;
+		margin: 0;
+	}
+
+	/* --- Settings Cards --- */
+	.settings-card {
+		background: #ffffff;
+		border-radius: 0.75rem;
+		border: 1px solid #e6e9ee;
+		padding: 2rem;
+		margin-bottom: 1.5rem;
+	}
+
+		.settings-card h4 {
+			font-size: 1.1rem;
+			font-weight: 800;
+			color: #1a2733;
+			margin-bottom: 1.5rem;
+			padding-bottom: 1rem;
+			border-bottom: 1px solid #e6e9ee;
+		}
+
+	/* --- Login Provider Rows --- */
+	.login-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem;
+		background-color: #fafbfc;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.login-provider-info {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.provider-icon {
+		width: 40px;
+		height: 40px;
+		background-color: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.375rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.login-provider-info h6 {
+		margin: 0;
+		font-weight: 700;
+		color: #1a2733;
+	}
+
+	.login-provider-info small {
+		color: #5a6571;
+		font-size: 0.8rem;
+	}
+
+	/* --- Custom Buttons --- */
+	.btn-edu-danger {
+		background-color: transparent;
+		color: #e05545;
+		border: 1px solid #e05545;
+		font-weight: 600;
+		font-size: 0.85rem;
+		padding: 0.4rem 1rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+	}
+
+		.btn-edu-danger:hover {
+			background-color: #e05545;
+			color: white;
+		}
+
+	.btn-edu-primary {
+		background-color: #0d7a6e;
+		color: #ffffff;
+		border: 1px solid #0d7a6e;
+		font-weight: 600;
+		font-size: 0.9rem;
+		padding: 0.6rem 1.25rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		justify-content: center;
+	}
+
+		.btn-edu-primary:hover {
+			background-color: #095e54;
+			color: white;
+		}
+
+	/* --- Status Message --- */
+	.alert-success-custom {
+		background-color: #e6f2f0;
+		color: #0d7a6e;
+		border: 1px solid #cce5e2;
+		border-radius: 0.375rem;
+		padding: 1rem;
+		margin-bottom: 2rem;
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+</style>
+
+<div class="dashboard-bg">
+	<div class="container" style="max-width: 800px;">
+
+		<!-- Status Message -->
+		@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+		{
+			<div class="alert-success-custom shadow-sm">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+					<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+				</svg>
+				@ViewBag.StatusMessage
+			</div>
+		}
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16">
+					<path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z" />
+					<path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99A1.5 1.5 0 1 1 9.5 6.5z" />
+				</svg>
+			</div>
+			<div>
+				<h2>Manage External Logins</h2>
+				<p>Connect third-party accounts for faster sign-in.</p>
+			</div>
+		</div>
+
+		@{
+			var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+			if (loginProviders.Count() == 0)
+			{
+				<div class="settings-card text-center">
+					<p class="text-muted mb-0">There are no external authentication services configured.</p>
+				</div>
+			}
+			else
+			{
+				<div class="row g-4">
+
+					<!-- Card 1: Currently Connected -->
+					<div class="col-md-6">
+						<div class="settings-card h-100">
+							<h4>Connected Accounts</h4>
+
+							@if (Model.CurrentLogins.Count > 0)
+							{
+								foreach (var account in Model.CurrentLogins)
+								{
+									<div class="login-row">
+										<div class="login-provider-info">
+											<div class="provider-icon">
+												@if (account.LoginProvider.ToLower() == "google")
+												{
+													<!-- Google Icon -->
+													<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+														<path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+														<path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+														<path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+														<path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+													</svg>
+												}
+												else
+												{
+													<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+														<path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 13h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 1h-8A1.5 1.5 0 0 0 5 2.5v2a.5.5 0 0 0 1 0v-2z" />
+														<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h6.793L6.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L8.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+													</svg>
+												}
+											</div>
+											<div>
+												<h6>@account.LoginProvider</h6>
+												<small>Connected</small>
+											</div>
+										</div>
+
+										@if (ViewBag.ShowRemoveButton)
+										{
+											using (Html.BeginForm("RemoveLogin", "Manage", FormMethod.Post, new { @class = "m-0" }))
+											{
+												@Html.AntiForgeryToken()
+												<div>
+													@Html.Hidden("loginProvider", account.LoginProvider)
+													@Html.Hidden("providerKey", account.ProviderKey)
+													<input type="submit" class="btn btn-edu-danger" value="Remove" title="Remove this @account.LoginProvider login from your account" />
+												</div>
+											}
+										}
+									</div>
+								}
+							}
+							else
+							{
+								<p class="text-muted text-center py-4">You have no external accounts connected.</p>
+							}
+						</div>
+					</div>
+
+					<!-- Card 2: Add New Connection -->
+					<div class="col-md-6">
+						<div class="settings-card h-100">
+							<h4>Add a Connection</h4>
+
+							@if (Model.OtherLogins.Count > 0)
+							{
+								using (Html.BeginForm("LinkLogin", "Manage"))
+								{
+									@Html.AntiForgeryToken()
+									<div id="socialLoginList">
+										<p class="text-muted small mb-3">Link your account to sign in faster next time.</p>
+										@foreach (AuthenticationDescription p in Model.OtherLogins)
+										{
+											<button type="submit" class="btn btn-edu-primary mb-2" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">
+												@if (p.AuthenticationType.ToLower() == "google")
+												{
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 48 48">
+														<path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+														<path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+														<path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+														<path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+													</svg>
+												}
+												Connect @p.AuthenticationType
+											</button>
+										}
+									</div>
+								}
+							}
+							else
+							{
+								<p class="text-muted text-center py-4">All available providers are already connected.</p>
+							}
+						</div>
+					</div>
+
+				</div>
+			}
+		}
+
+		<!-- Back Button -->
+		<div class="mt-4">
+			<a href="@Url.Action("Index", "Manage")" class="btn btn-edu-action text-decoration-none">
+				&larr; Back to Account Settings
+			</a>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,204 @@
+﻿@model IEnumerable<EduAcess.Models.Institution>
+@{
+	ViewBag.Title = "Institutions";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+	.admin-table-card {
+		background: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		overflow: hidden;
+	}
+
+	.admin-table-header {
+		padding: 1.25rem 1.5rem;
+		border-bottom: 1px solid #e6e9ee;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+		.admin-table-header h5 {
+			margin: 0;
+			font-weight: 700;
+			color: #1a2733;
+			font-size: 1.1rem;
+			flex-grow: 1;
+		}
+
+	.filter-controls {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+		.filter-controls input,
+		.filter-controls select {
+			font-size: 0.85rem;
+			border: 1px solid #e6e9ee;
+			border-radius: 0.25rem;
+			padding: 0.35rem 0.75rem;
+		}
+
+		.filter-controls select {
+			width: 180px;
+		}
+
+	.table-custom {
+		margin-bottom: 0;
+	}
+
+		.table-custom th {
+			background-color: #ffffff;
+			color: #5a6571;
+			font-weight: 600;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-top: none;
+			border-bottom: 1px solid #e6e9ee;
+			padding: 1rem 1.5rem;
+		}
+
+		.table-custom td {
+			padding: 1rem 1.5rem;
+			vertical-align: middle;
+			border-bottom: 1px solid #f0f2f5;
+			font-size: 0.9rem;
+		}
+
+	.badge-type {
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+	}
+
+		.badge-type.university {
+			background-color: #e6f2f0;
+			color: #0d7a6e;
+		}
+
+		.badge-type.tvet {
+			background-color: #eef5fc;
+			color: #1f78d1;
+		}
+
+		.badge-type.private {
+			background-color: #fff8eb;
+			color: #f5a623;
+		}
+</style>
+
+<div class="mb-4">
+	<h2 class="fw-bold mb-1" style="color: #1a2733;">Institutions</h2>
+	<p class="text-muted">View all universities, TVET colleges, and private institutions on EduAccess.</p>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<div class="admin-table-card">
+			<div class="admin-table-header">
+				<h5>Registered Institutions (<span id="visibleCount">@Model.Count()</span>)</h5>
+
+				<!-- Filters -->
+				<div class="filter-controls">
+					<select id="typeFilter" class="form-select" onchange="filterTable()">
+						<option value="">All Types</option>
+						<option value="University">Universities</option>
+						<option value="TVET">TVET Colleges</option>
+						<option value="Private">Private Colleges</option>
+					</select>
+
+					<select id="provinceFilter" class="form-select" onchange="filterTable()">
+						<option value="">All Provinces</option>
+						@foreach (var prov in Model.Select(i => i.Province).Distinct().OrderBy(p => p))
+						{
+							<option value="@prov">@prov</option>
+						}
+					</select>
+
+					<input type="text" id="searchInput" class="form-control" placeholder="Search..." onkeyup="filterTable()" />
+				</div>
+			</div>
+
+			<div class="table-responsive">
+				<table class="table table-custom table-hover" id="institutionsTable">
+					<thead>
+						<tr>
+							<th>Institution Name</th>
+							<th>Short Name</th>
+							<th>Type</th>
+							<th>Province</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model != null && Model.Any())
+						{
+							foreach (var inst in Model)
+							{
+								var displayType = inst.Type == "TVET" ? "TVET" : inst.Type;
+								var badgeClass = inst.Type == "University" ? "university" : (inst.Type == "TVET" ? "tvet" : "private");
+
+								<tr data-type="@inst.Type" data-province="@inst.Province">
+									<td class="fw-bold text-dark inst-name">@inst.Name</td>
+									<td class="text-muted">@inst.ShortName</td>
+									<td>
+										<span class="badge-type @badgeClass">@displayType</span>
+									</td>
+									<td class="text-muted inst-province">@inst.Province</td>
+								</tr>
+							}
+						}
+						else
+						{
+							<tr>
+								<td colspan="4" class="text-center text-muted py-4">No institutions found in the database.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		function filterTable() {
+			var typeFilter = document.getElementById("typeFilter").value.toUpperCase();
+			var provinceFilter = document.getElementById("provinceFilter").value.toUpperCase();
+			var searchFilter = document.getElementById("searchInput").value.toUpperCase();
+			var table = document.getElementById("institutionsTable");
+			var tr = table.getElementsByTagName("tr");
+			var visibleCount = 0;
+
+			// Loop through all table rows, and hide those that don't match the filters
+			for (var i = 1; i < tr.length; i++) { // Start at 1 to skip header row
+				var nameCell = tr[i].getElementsByTagName("td")[0];
+				var provinceCell = tr[i].getElementsByTagName("td")[3];
+				var rowType = tr[i].getAttribute("data-type");
+				var rowProvince = tr[i].getAttribute("data-province");
+
+				if (!rowType || !rowProvince) continue;
+
+				var matchesType = (typeFilter === "" || rowType.toUpperCase() === typeFilter);
+				var matchesProvince = (provinceFilter === "" || rowProvince.toUpperCase() === provinceFilter);
+				var matchesSearch = (searchFilter === "" || nameCell.textContent.toUpperCase().indexOf(searchFilter) > -1);
+
+				if (matchesType && matchesProvince && matchesSearch) {
+					tr[i].style.display = "";
+					visibleCount++;
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+
+			document.getElementById("visibleCount").innerText = visibleCount;
+		}
+	</script>
+}

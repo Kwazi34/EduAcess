@@ -1,0 +1,229 @@
+﻿@model EduAcess.Models.Programme
+@{
+	ViewBag.Title = Model.Name;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var hasMarks = (bool)ViewBag.HasMarks;
+	var learnerAps = (int)ViewBag.LearnerAps;
+	var matchedSubjects = (System.Collections.Generic.List<string>)ViewBag.MatchedSubjects;
+	var missingSubjects = (System.Collections.Generic.List<string>)ViewBag.MissingSubjects;
+
+	bool eligible = hasMarks && learnerAps >= Model.RequiredAps;
+	int diff = Model.RequiredAps - learnerAps;
+}
+
+<style>
+	body {
+		background-color: #f8f9fa;
+	}
+
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	.detail-hero {
+		background: linear-gradient(135deg, #095e54 0%, #0d7a6e 50%, #20c997 100%);
+		color: #fff;
+		padding: 3rem 0 4rem 0;
+	}
+
+		.detail-hero h1 {
+			font-size: 2.2rem;
+			font-weight: 800;
+			margin-bottom: 0.5rem;
+		}
+
+		.detail-hero .institution {
+			font-size: 1.1rem;
+			opacity: 0.9;
+		}
+
+		.detail-hero .breadcrumb-link {
+			color: rgba(255,255,255,0.8);
+			text-decoration: none;
+			font-size: 0.9rem;
+		}
+
+			.detail-hero .breadcrumb-link:hover {
+				color: #fff;
+			}
+
+	.detail-card {
+		background: #fff;
+		border-radius: 1rem;
+		padding: 2rem;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+		margin-top: -2rem;
+		position: relative;
+		z-index: 10;
+	}
+
+	.detail-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid #f0f2f5;
+	}
+
+		.detail-row:last-child {
+			border-bottom: none;
+		}
+
+	.detail-label {
+		color: #5a6571;
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.detail-value {
+		font-weight: 700;
+		color: #1a2733;
+		text-align: right;
+	}
+
+	.eligibility-box {
+		border-radius: 0.75rem;
+		padding: 1.5rem;
+		margin-top: 1.5rem;
+	}
+
+		.eligibility-box.eligible {
+			background: #f0f7f4;
+			border: 1px solid #cce5e2;
+		}
+
+		.eligibility-box.short {
+			background: #fff8eb;
+			border: 1px solid #f5e0b8;
+		}
+
+		.eligibility-box.guest {
+			background: #f8f9fa;
+			border: 1px solid #eae7e0;
+		}
+
+	.subject-check {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4rem 0;
+		font-size: 0.9rem;
+	}
+
+		.subject-check.met {
+			color: #0d7a6e;
+		}
+
+		.subject-check.missing {
+			color: #e05545;
+		}
+
+	.big-aps {
+		font-size: 3.5rem;
+		font-weight: 900;
+		line-height: 1;
+	}
+</style>
+
+<!-- Hero -->
+<section class="detail-hero">
+	<div class="container">
+		<a href="@Url.Action("Index", "Programmes")" class="breadcrumb-link">&larr; Back to All Programmes</a>
+		<h1 class="mt-2">@Model.Name</h1>
+		<div class="institution">@Model.Institution.Name · @Model.Institution.Province</div>
+	</div>
+</section>
+
+<!-- Detail Card -->
+<div class="container">
+	<div class="detail-card">
+		<div class="row">
+			<div class="col-md-7">
+				<h4 class="fw-bold mb-3">Programme Details</h4>
+
+				<div class="detail-row">
+					<span class="detail-label">Institution</span>
+					<span class="detail-value">@Model.Institution.Name</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Province</span>
+					<span class="detail-value">@Model.Institution.Province</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Qualification Type</span>
+					<span class="detail-value">@Model.QualificationType</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Field of Study</span>
+					<span class="detail-value">@Model.FieldOfStudy</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Duration</span>
+					<span class="detail-value">@Model.DurationYears years</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Required APS</span>
+					<span class="detail-value">@Model.RequiredAps</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Required Subjects</span>
+					<span class="detail-value">@Model.RequiredSubjects</span>
+				</div>
+			</div>
+
+			<div class="col-md-5">
+				@if (hasMarks)
+				{
+					if (eligible)
+					{
+						<div class="eligibility-box eligible text-center">
+							<div class="big-aps" style="color: #0d7a6e;">@learnerAps</div>
+							<div class="fw-bold mt-2" style="color: #0d7a6e;">You Qualify!</div>
+							<p class="text-muted small mt-2 mb-0">Your APS of @learnerAps meets the required @Model.RequiredAps.</p>
+						</div>
+
+						if (matchedSubjects.Any() || missingSubjects.Any())
+						{
+							<div class="mt-3">
+								<h6 class="fw-bold">Subject Check</h6>
+								@foreach (var s in matchedSubjects)
+								{
+									<div class="subject-check met"><span>✓</span> @s</div>
+								}
+								@foreach (var s in missingSubjects)
+								{
+									<div class="subject-check missing"><span>✗</span> @s (missing)</div>
+								}
+							</div>
+						}
+					}
+					else
+					{
+						<div class="eligibility-box short text-center">
+							<div class="big-aps" style="color: #f5a623;">@learnerAps</div>
+							<div class="fw-bold mt-2" style="color: #856404;">@diff APS Short</div>
+							<p class="text-muted small mt-2 mb-0">You need @diff more APS points to qualify for this programme.</p>
+						</div>
+					}
+				}
+				else
+				{
+					<div class="eligibility-box guest text-center">
+						<div class="big-aps" style="color: #0d7a6e;">@Model.RequiredAps</div>
+						<div class="fw-bold mt-2">Required APS</div>
+						<p class="text-muted small mt-2 mb-3">Log in to see if you qualify.</p>
+						@if (!User.Identity.IsAuthenticated)
+						{
+							<a href="@Url.Action("Register", "Account")" class="btn btn-success fw-bold w-100" style="background: #0d7a6e;">Get Started</a>
+						}
+						else
+						{
+							<a href="@Url.Action("Index", "Dashboard")" class="btn btn-success fw-bold w-100" style="background: #0d7a6e;">Enter Marks</a>
+						}
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>

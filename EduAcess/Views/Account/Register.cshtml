@@ -1,0 +1,1078 @@
+﻿@model EduAcess.Models.RegisterViewModel
+@using Microsoft.Owin.Security
+@{
+	ViewBag.Title = "Register";
+	var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+}
+
+<style>
+	.body-content {
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	body {
+		background-color: #faf9f6;
+		color: #1a2733;
+	}
+
+	.auth-page-wrapper {
+		min-height: calc(100vh - 73px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #faf9f6;
+		padding: 1.5rem;
+	}
+
+	.auth-split-container {
+		display: flex;
+		width: 100%;
+		max-width: 1000px;
+		background: #ffffff;
+		border-radius: 0.75rem;
+		box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+		border: 1px solid #eae7e0;
+		overflow: hidden;
+	}
+
+	/* --- LEFT PANEL WITH CARTOONS --- */
+	.auth-left-brand {
+		flex: 0 0 42%;
+		background: linear-gradient(rgba(13, 122, 110, 0.78), rgba(9, 94, 84, 0.9)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+		background-size: cover;
+		background-position: center;
+		padding: 2.5rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		color: #ffffff;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.cartoon-scene {
+		position: relative;
+		height: 220px;
+		margin: 1.5rem 0;
+	}
+
+	.walking-student {
+		position: absolute;
+		bottom: 20px;
+		left: -60px;
+		width: 70px;
+		height: 110px;
+		animation: walkAcross 12s linear infinite;
+	}
+
+	@@keyframes walkAcross {
+		0% {
+			left: -60px;
+			transform: scaleX(1);
+		}
+
+		45% {
+			left: 260px;
+			transform: scaleX(1);
+		}
+
+		50% {
+			left: 260px;
+			transform: scaleX(-1);
+		}
+
+		95% {
+			left: -60px;
+			transform: scaleX(-1);
+		}
+
+		100% {
+			left: -60px;
+			transform: scaleX(1);
+		}
+	}
+
+	.walking-student .leg {
+		animation: legBob 0.6s ease-in-out infinite alternate;
+		transform-origin: top center;
+	}
+
+		.walking-student .leg.right {
+			animation-delay: 0.3s;
+		}
+
+	@@keyframes legBob {
+		from {
+			transform: rotate(-20deg);
+		}
+
+		to {
+			transform: rotate(20deg);
+		}
+	}
+
+	.star {
+		position: absolute;
+		animation: floatStar 4s ease-in-out infinite;
+		opacity: 0.85;
+	}
+
+		.star.s1 {
+			top: 10px;
+			right: 20px;
+			animation-delay: 0s;
+			width: 20px;
+		}
+
+		.star.s2 {
+			top: 50px;
+			left: 30px;
+			animation-delay: 1s;
+			width: 14px;
+		}
+
+		.star.s3 {
+			top: 90px;
+			right: 50px;
+			animation-delay: 2s;
+			width: 16px;
+		}
+
+		.star.s4 {
+			top: 130px;
+			left: 80px;
+			animation-delay: 1.5s;
+			width: 12px;
+		}
+
+	@@keyframes floatStar {
+		0%, 100% {
+			transform: translateY(0) rotate(0deg);
+			opacity: 0.6;
+		}
+
+		50% {
+			transform: translateY(-12px) rotate(180deg);
+			opacity: 1;
+		}
+	}
+
+	.bouncing-book {
+		position: absolute;
+		bottom: 10px;
+		right: 20px;
+		width: 50px;
+		height: 40px;
+		animation: bookBounce 2s ease-in-out infinite;
+	}
+
+	@@keyframes bookBounce {
+		0%, 100% {
+			transform: translateY(0) rotate(-5deg);
+		}
+
+		50% {
+			transform: translateY(-15px) rotate(5deg);
+		}
+	}
+
+	.pulsing-cap {
+		position: absolute;
+		top: 15px;
+		left: 20px;
+		width: 55px;
+		height: 55px;
+		animation: capPulse 2.5s ease-in-out infinite;
+	}
+
+	@@keyframes capPulse {
+		0%, 100% {
+			transform: scale(1) rotate(-5deg);
+			filter: drop-shadow(0 0 5px rgba(245,166,35,0.3));
+		}
+
+		50% {
+			transform: scale(1.1) rotate(5deg);
+			filter: drop-shadow(0 0 15px rgba(245,166,35,0.7));
+		}
+	}
+
+	.cartoon-ground {
+		position: absolute;
+		bottom: 15px;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: rgba(255,255,255,0.25);
+		border-radius: 2px;
+	}
+
+	.badge-soft-light {
+		background-color: rgba(255,255,255,0.15);
+		color: #ffffff;
+		font-weight: 700;
+		font-size: 0.75rem;
+		letter-spacing: 1px;
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
+		text-transform: uppercase;
+		display: inline-block;
+		align-self: flex-start;
+		margin-bottom: 1.25rem;
+	}
+
+	.auth-left-brand h2 {
+		font-size: 2.5rem;
+		font-weight: 800;
+		line-height: 1.1;
+		margin-bottom: 1rem;
+		letter-spacing: -1.5px;
+	}
+
+	.auth-left-brand p {
+		font-size: 1.05rem;
+		opacity: 0.92;
+		max-width: 340px;
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+	}
+
+	.brand-points {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		font-size: 0.9rem;
+	}
+
+		.brand-points li {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 0.6rem;
+		}
+
+		.brand-points svg {
+			flex: 0 0 14px;
+		}
+
+	/* --- RIGHT FORM --- */
+	.auth-right-form {
+		flex: 1 1 58%;
+		padding: 2.5rem 3rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		background: #ffffff;
+	}
+
+		.auth-right-form h3 {
+			font-size: 2rem;
+			font-weight: 800;
+			color: #1a2733;
+			letter-spacing: -0.5px;
+			margin-bottom: 0.35rem;
+		}
+
+		.auth-right-form .subtitle {
+			color: #5a6571;
+			margin-bottom: 1.5rem;
+		}
+
+	.form-group-custom {
+		margin-bottom: 1rem;
+		position: relative;
+	}
+
+		.form-group-custom label {
+			font-weight: 600;
+			color: #1a2733;
+			font-size: 0.9rem;
+			margin-bottom: 0.4rem;
+			display: block;
+		}
+
+	.form-control-custom {
+		width: 100%;
+		padding: 0.7rem 1rem;
+		font-size: 1rem;
+		border: 1px solid #cfd6de;
+		border-radius: 0.375rem;
+		background-color: #fafbfc;
+		transition: 0.2s;
+		padding-right: 40px;
+	}
+
+		.form-control-custom:focus {
+			background-color: #ffffff;
+			border-color: #0d7a6e;
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(13, 122, 110, 0.12);
+		}
+
+		.form-control-custom.is-valid {
+			border-color: #0d7a6e;
+			background-color: #f0f7f4;
+		}
+
+		.form-control-custom.is-invalid {
+			border-color: #e05545;
+			background-color: #fcebe9;
+		}
+
+	.validation-icon {
+		position: absolute;
+		right: 12px;
+		top: 38px;
+		font-size: 1.1rem;
+		font-weight: 900;
+		pointer-events: none;
+	}
+
+		.validation-icon.valid {
+			color: #0d7a6e;
+		}
+
+		.validation-icon.invalid {
+			color: #e05545;
+		}
+
+	.form-row-2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	.password-wrapper {
+		position: relative;
+	}
+
+		.password-wrapper .form-control-custom {
+			padding-right: 4rem;
+		}
+
+	.show-password-btn {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		background: none;
+		border: none;
+		color: #0d7a6e;
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+		z-index: 2;
+	}
+
+	.strength-meter {
+		height: 6px;
+		border-radius: 3px;
+		margin-top: 6px;
+		background: #eae7e0;
+		overflow: hidden;
+	}
+
+		.strength-meter .bar {
+			height: 100%;
+			width: 0%;
+			border-radius: 3px;
+			transition: width 0.3s, background-color 0.3s;
+		}
+
+	.strength-label {
+		font-size: 0.75rem;
+		margin-top: 4px;
+		font-weight: 600;
+	}
+
+	.email-status {
+		font-size: 0.75rem;
+		margin-top: 4px;
+		font-weight: 600;
+	}
+
+	.btn-edu-solid {
+		background-color: #0d7a6e;
+		color: #fff;
+		font-weight: 600;
+		border: 1px solid #0d7a6e;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+	}
+
+		.btn-edu-solid:hover:not(:disabled) {
+			background-color: #095e54;
+			color: #fff;
+		}
+
+		.btn-edu-solid:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+	.btn-google-custom {
+		background-color: #ffffff;
+		color: #1a2733;
+		font-weight: 600;
+		padding: 0.75rem;
+		border-radius: 0.375rem;
+		border: 1px solid #cfd6de;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		transition: 0.2s;
+		text-decoration: none;
+		font-size: 1rem;
+	}
+
+		.btn-google-custom:hover {
+			background-color: #faf9f6;
+			color: #1a2733;
+			border-color: #b0b8c1;
+		}
+
+	.divider {
+		display: flex;
+		align-items: center;
+		text-align: center;
+		color: #a0abb5;
+		font-size: 0.8rem;
+		margin: 1.25rem 0;
+	}
+
+		.divider::before, .divider::after {
+			content: '';
+			flex: 1;
+			border-bottom: 1px solid #eae7e0;
+		}
+
+		.divider:not(:empty)::before {
+			margin-right: .5em;
+		}
+
+		.divider:not(:empty)::after {
+			margin-left: .5em;
+		}
+
+	/* Terms */
+	.terms-check {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		font-size: 0.85rem;
+		color: #5a6571;
+		margin: 1.25rem 0 0.5rem 0;
+	}
+
+		.terms-check input[type="checkbox"] {
+			margin-top: 0.25rem;
+			accent-color: #0d7a6e;
+			width: 16px;
+			height: 16px;
+			flex-shrink: 0;
+			cursor: pointer;
+		}
+
+		.terms-check label {
+			font-weight: 400;
+			margin: 0;
+			cursor: pointer;
+			line-height: 1.4;
+		}
+
+		.terms-check a {
+			color: #0d7a6e;
+			font-weight: 600;
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+	/* Modal Styling */
+	.terms-modal .modal-content {
+		border: none;
+		border-radius: 1rem;
+		overflow: hidden;
+	}
+
+	.terms-modal .modal-header {
+		background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%);
+		color: #ffffff;
+		border: none;
+		padding: 1.5rem 2rem;
+	}
+
+	.terms-modal .modal-title {
+		font-weight: 800;
+		font-size: 1.25rem;
+	}
+
+	.terms-modal .btn-close {
+		filter: invert(1);
+	}
+
+	.terms-modal .modal-body {
+		padding: 2rem;
+		max-height: 60vh;
+		overflow-y: auto;
+		color: #1a2733;
+	}
+
+		.terms-modal .modal-body h5 {
+			font-weight: 800;
+			color: #0d7a6e;
+			margin-top: 1.25rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.terms-modal .modal-body p {
+			color: #5a6571;
+			font-size: 0.9rem;
+			line-height: 1.6;
+			margin-bottom: 0.75rem;
+		}
+
+	.terms-modal .modal-footer {
+		border-top: 1px solid #eae7e0;
+		padding: 1rem 2rem;
+		background: #faf9f6;
+	}
+
+	.terms-modal .btn-accept {
+		background: #0d7a6e;
+		color: #fff;
+		font-weight: 700;
+		border: none;
+		padding: 0.6rem 2rem;
+		border-radius: 0.375rem;
+	}
+
+		.terms-modal .btn-accept:hover {
+			background: #095e54;
+			color: #fff;
+		}
+
+	.terms-modal .btn-decline {
+		background: transparent;
+		color: #5a6571;
+		font-weight: 600;
+		border: 1px solid #cfd6de;
+		padding: 0.6rem 2rem;
+		border-radius: 0.375rem;
+	}
+
+	@@media (max-width: 991px) {
+		.auth-split-container {
+			flex-direction: column;
+		}
+
+		.auth-left-brand {
+			display: none;
+		}
+
+		.auth-right-form {
+			padding: 2rem 1.5rem;
+		}
+
+		.form-row-2 {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+	}
+</style>
+
+<div class="auth-page-wrapper">
+	<div class="auth-split-container">
+
+		<!-- LEFT PANEL WITH CARTOONS -->
+		<div class="auth-left-brand">
+			<span class="badge-soft-light">Official Study &amp; Funding Guide</span>
+			<h2>Start your journey.</h2>
+			<p>Join thousands of matriculants discovering their perfect study options, funding, and Plan B routes.</p>
+
+			<div class="cartoon-scene">
+				<div class="cartoon-ground"></div>
+				<svg class="pulsing-cap" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+					<path d="M32 10 L60 24 L32 38 L4 24 Z" fill="#f5a623" />
+					<path d="M32 38 L60 24 L60 28 L32 42 L4 28 L4 24 Z" fill="#c98a18" />
+					<rect x="30" y="8" width="4" height="8" fill="#fff" />
+					<circle cx="32" cy="6" r="3" fill="#fff" />
+					<path d="M14 30 L14 44 Q14 52 32 52 Q50 52 50 44 L50 30" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" />
+				</svg>
+				<svg class="star s1" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 12.6,7 19,7.6 14,12 15.5,18.5 10,15 4.5,18.5 6,12 1,7.6 7.4,7" fill="#f5a623" /></svg>
+				<svg class="star s2" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 12.6,7 19,7.6 14,12 15.5,18.5 10,15 4.5,18.5 6,12 1,7.6 7.4,7" fill="#ffffff" /></svg>
+				<svg class="star s3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 12.6,7 19,7.6 14,12 15.5,18.5 10,15 4.5,18.5 6,12 1,7.6 7.4,7" fill="#f5a623" /></svg>
+				<svg class="star s4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 12.6,7 19,7.6 14,12 15.5,18.5 10,15 4.5,18.5 6,12 1,7.6 7.4,7" fill="#ffffff" /></svg>
+				<svg class="walking-student" viewBox="0 0 70 110" xmlns="http://www.w3.org/2000/svg">
+					<rect x="46" y="30" width="16" height="26" rx="4" fill="#f5a623" />
+					<rect x="20" y="30" width="28" height="38" rx="6" fill="#ffffff" />
+					<circle cx="34" cy="18" r="14" fill="#fce0c2" />
+					<path d="M20 16 Q34 0 48 16 L48 8 Q34 -4 20 8 Z" fill="#1a2733" />
+					<circle cx="29" cy="17" r="1.8" fill="#1a2733" />
+					<circle cx="39" cy="17" r="1.8" fill="#1a2733" />
+					<path d="M29 23 Q34 26 39 23" stroke="#1a2733" stroke-width="1.5" fill="none" stroke-linecap="round" />
+					<rect class="leg left" x="24" y="68" width="8" height="26" rx="3" fill="#1a2733" />
+					<rect class="leg right" x="36" y="68" width="8" height="26" rx="3" fill="#1a2733" />
+					<ellipse cx="28" cy="96" rx="7" ry="4" fill="#0d7a6e" />
+					<ellipse cx="40" cy="96" rx="7" ry="4" fill="#0d7a6e" />
+					<rect x="14" y="38" width="8" height="24" rx="3" fill="#ffffff" transform="rotate(-20 18 50)" />
+				</svg>
+				<svg class="bouncing-book" viewBox="0 0 50 40" xmlns="http://www.w3.org/2000/svg">
+					<rect x="2" y="6" width="46" height="30" rx="3" fill="#f5a623" />
+					<rect x="2" y="6" width="6" height="30" fill="#c98a18" />
+					<line x1="12" y1="14" x2="44" y2="14" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+					<line x1="12" y1="20" x2="44" y2="20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+					<line x1="12" y1="26" x2="36" y2="26" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.4" />
+				</svg>
+			</div>
+
+			<ul class="brand-points">
+				<li><svg width="14" height="14" fill="#ffffff" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Secure onboarding</li>
+				<li><svg width="14" height="14" fill="#ffffff" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Local support</li>
+				<li><svg width="14" height="14" fill="#ffffff" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Built for learners</li>
+			</ul>
+		</div>
+
+		<!-- RIGHT REGISTER FORM -->
+		<div class="auth-right-form">
+			<h3>Create an account</h3>
+			<p class="subtitle">Enter your details to get started.</p>
+
+			@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form", id = "registerForm" }))
+			{
+				@Html.AntiForgeryToken()
+				@Html.ValidationSummary("", new { @class = "text-danger mb-3" })
+
+				<div class="form-row-2">
+					<div class="form-group-custom">
+						@Html.LabelFor(m => m.FirstName)
+						@Html.TextBoxFor(m => m.FirstName, new { @class = "form-control-custom", placeholder = "Thandi", id = "firstName", oninput = "validateName('firstName')" })
+						<span class="validation-icon" id="firstNameIcon"></span>
+						@Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger small d-block mt-1" })
+					</div>
+					<div class="form-group-custom">
+						@Html.LabelFor(m => m.Surname)
+						@Html.TextBoxFor(m => m.Surname, new { @class = "form-control-custom", placeholder = "Mokoena", id = "surname", oninput = "validateName('surname')" })
+						<span class="validation-icon" id="surnameIcon"></span>
+						@Html.ValidationMessageFor(m => m.Surname, "", new { @class = "text-danger small d-block mt-1" })
+					</div>
+				</div>
+
+				<div class="form-group-custom">
+					@Html.LabelFor(m => m.PhoneNumber)
+					@Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control-custom", placeholder = "+27 82 123 4567", type = "tel", id = "phone", oninput = "validatePhone()" })
+					<span class="validation-icon" id="phoneIcon"></span>
+					<div id="phoneHint" class="email-status"></div>
+					@Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small d-block mt-1" })
+				</div>
+
+				<div class="form-group-custom">
+					@Html.LabelFor(m => m.Email)
+					@Html.TextBoxFor(m => m.Email, new { @class = "form-control-custom", placeholder = "name@example.com", type = "email", id = "email", oninput = "validateEmail()" })
+					<span class="validation-icon" id="emailIcon"></span>
+					<div id="emailHint" class="email-status"></div>
+					@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small d-block mt-1" })
+				</div>
+
+				<div class="form-group-custom">
+					@Html.LabelFor(m => m.Password)
+					<div class="password-wrapper">
+						@Html.PasswordFor(m => m.Password, new { @class = "form-control-custom", placeholder = "••••••••", id = "passwordInput", oninput = "checkPasswordStrength()" })
+						<button type="button" class="show-password-btn" onclick="togglePassword('passwordInput', this)">Show</button>
+					</div>
+					<div class="strength-meter">
+						<div class="bar" id="strengthBar"></div>
+					</div>
+					<div class="strength-label" id="strengthLabel"></div>
+					@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small d-block mt-1" })
+				</div>
+
+				<div class="form-group-custom">
+					@Html.LabelFor(m => m.ConfirmPassword)
+					<div class="password-wrapper">
+						@Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control-custom", placeholder = "••••••••", id = "confirmPasswordInput", oninput = "checkPasswordMatch()" })
+						<button type="button" class="show-password-btn" onclick="togglePassword('confirmPasswordInput', this)">Show</button>
+					</div>
+					<div class="email-status" id="matchHint"></div>
+					@Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small d-block mt-1" })
+				</div>
+
+				<!-- FIXED TERMS CHECKBOX -->
+				<div class="terms-check">
+					<input type="hidden" name="AcceptTerms" id="AcceptTermsHidden" value="false" />
+					<input type="checkbox"
+						   name="AcceptTerms"
+						   id="termsCheckbox"
+						   value="true"
+						   onchange="syncTermsCheckbox(this)"
+						   @(Model != null && Model.AcceptTerms ? "checked=\"checked\"" : "") />
+					<label for="termsCheckbox">
+						I agree to the
+						<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+						and
+						<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+						of EduAccess.
+					</label>
+				</div>
+				@Html.ValidationMessageFor(m => m.AcceptTerms, "", new { @class = "text-danger small d-block mb-3" })
+
+				<button type="submit" class="btn btn-edu-solid w-100" id="submitBtn" @(Model != null && Model.AcceptTerms ? "" : "disabled")>
+					<span id="submitText">@(Model != null && Model.AcceptTerms ? "Create Account →" : "Please accept the terms")</span>
+				</button>
+			}
+
+			@if (loginProviders.Count() > 0)
+			{
+				<div class="divider">or</div>
+				using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+				{
+					@Html.AntiForgeryToken()
+					<div id="socialLoginList">
+						@foreach (AuthenticationDescription p in loginProviders)
+						{
+							<button type="submit" class="btn-google-custom" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Sign up using your @p.Caption account">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+									<path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+									<path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+									<path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+									<path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+								</svg>
+								Sign up with @p.AuthenticationType
+							</button>
+						}
+					</div>
+				}
+			}
+
+			<div class="text-center mt-3">
+				<small class="text-muted">Already have an account?</small><br />
+				<a href="@Url.Action("Login", "Account")" class="fw-bold" style="color: #0d7a6e; text-decoration: none;">Log in here</a>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- TERMS & CONDITIONS MODAL -->
+<div class="modal fade terms-modal" id="termsModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Terms and Conditions — EduAccess</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p><em>Last updated: October 2026</em></p>
+				<p>Welcome to EduAccess ("we", "our", "the platform"). These Terms and Conditions govern your use of our website and mobile application. By creating an account, you agree to these terms.</p>
+
+				<h5>1. About EduAccess</h5>
+				<p>EduAccess is a free AI-powered guide that helps South African matriculants discover study options, funding, and alternative pathways. We complement NSFAS; we do not replace it.</p>
+
+				<h5>2. Free for learners</h5>
+				<p>EduAccess is free for all learners. We will never charge a learner to use the platform or sell their personal data to third parties.</p>
+
+				<h5>3. Your account</h5>
+				<p>You are responsible for keeping your login details safe. You agree to provide accurate information about your marks, household income, and personal details. Do not impersonate another person.</p>
+
+				<h5>4. Data & privacy</h5>
+				<p>Your marks and profile are stored securely. We never share your individual data with third-party advertisers. See our Privacy Policy for details.</p>
+
+				<h5>5. AI guidance</h5>
+				<p>EduAccess uses a hybrid system: deterministic rules for eligibility, and AI for explanations. The AI never makes the final eligibility decision. Always confirm requirements with the institution.</p>
+
+				<h5>6. No guarantee of admission</h5>
+				<p>EduAccess provides guidance only. We do not guarantee admission to any programme or approval of any bursary. Applications are ultimately handled by the institutions and funders.</p>
+
+				<h5>7. Verification</h5>
+				<p>All bursary listings and programme requirements carry a last-verified date. When we're unsure, we say so. Programme details may change — verify directly with the institution before applying.</p>
+
+				<h5>8. Acceptable use</h5>
+				<p>Do not misuse the platform (e.g., scraping, hacking, spamming). We may suspend accounts that violate these terms.</p>
+
+				<h5>9. Changes</h5>
+				<p>We may update these terms. Continued use after changes means you accept the new terms.</p>
+
+				<h5>10. Contact</h5>
+				<p>Questions? Email us at <a href="mailto:hello@eduaccess.co.za">hello@eduaccess.co.za</a>.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-decline" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-accept" onclick="acceptTermsAndClose('termsModal')">I Accept</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="modal fade terms-modal" id="privacyModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Privacy Policy — EduAccess</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p><em>Last updated: October 2026</em></p>
+				<p>At EduAccess, we take your privacy seriously. This policy explains what data we collect, how we use it, and your rights.</p>
+
+				<h5>1. What we collect</h5>
+				<p>We collect: your name, email, phone number, marks, household income, and programme preferences.</p>
+
+				<h5>2. How we use it</h5>
+				<p>To match you with programmes, bursaries, and Plan B pathways. To show your APS and eligibility. To send deadline reminders (if you opt in).</p>
+
+				<h5>3. What we never do</h5>
+				<p>We never sell your data. We never share your individual profile with advertisers. We never send your personal details to third-party AI models beyond what the answer needs.</p>
+
+				<h5>4. Where your data lives</h5>
+				<p>Your marks are stored on our secure server, not the AI model. The AI never decides eligibility — only explains it.</p>
+
+				<h5>5. Your rights</h5>
+				<p>You can delete your account and all data at any time. You can request a copy of your data. Contact <a href="mailto:hello@eduaccess.co.za">hello@eduaccess.co.za</a>.</p>
+
+				<h5>6. Cookies</h5>
+				<p>We use session cookies to keep you logged in. No third-party tracking cookies.</p>
+
+				<h5>7. Minors</h5>
+				<p>Most of our users are 16-19. We handle minor data with extra care and never share it without consent.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-decline" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-accept" onclick="acceptTermsAndClose('privacyModal')">I Accept</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@Scripts.Render("~/bundles/jqueryval")
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		// 1. TOGGLE PASSWORD VISIBILITY
+		function togglePassword(inputId, btn) {
+			var input = document.getElementById(inputId);
+			if (input.type === "password") {
+				input.type = "text";
+				btn.textContent = "Hide";
+			} else {
+				input.type = "password";
+				btn.textContent = "Show";
+			}
+		}
+
+		// 2. LIVE NAME VALIDATION
+		function validateName(fieldId) {
+			var field = document.getElementById(fieldId);
+			var icon = document.getElementById(fieldId + 'Icon');
+			var value = field.value.trim();
+
+			if (value.length === 0) {
+				field.classList.remove('is-valid', 'is-invalid');
+				icon.textContent = '';
+				return;
+			}
+
+			if (value.length >= 2 && /^[a-zA-Z\u00C0-\u024F\s'-]+$/.test(value)) {
+				field.classList.add('is-valid');
+				field.classList.remove('is-invalid');
+				icon.textContent = '✓';
+				icon.className = 'validation-icon valid';
+			} else {
+				field.classList.add('is-invalid');
+				field.classList.remove('is-valid');
+				icon.textContent = '✕';
+				icon.className = 'validation-icon invalid';
+			}
+		}
+
+		// 3. LIVE PHONE VALIDATION
+		function validatePhone() {
+			var phone = document.getElementById('phone');
+			var icon = document.getElementById('phoneIcon');
+			var hint = document.getElementById('phoneHint');
+			var value = phone.value.replace(/[\s\-\(\)]/g, '');
+
+			if (value.length === 0) {
+				phone.classList.remove('is-valid', 'is-invalid');
+				icon.textContent = '';
+				hint.textContent = '';
+				return;
+			}
+
+			var valid = /^(\+27|0)[6-8][0-9]{8}$/.test(value);
+
+			if (valid) {
+				phone.classList.add('is-valid');
+				phone.classList.remove('is-invalid');
+				icon.textContent = '✓';
+				icon.className = 'validation-icon valid';
+				hint.textContent = 'Valid South African phone number';
+				hint.style.color = '#0d7a6e';
+			} else {
+				phone.classList.add('is-invalid');
+				phone.classList.remove('is-valid');
+				icon.textContent = '✕';
+				icon.className = 'validation-icon invalid';
+				hint.textContent = 'Format: +27 82 123 4567 or 082 123 4567';
+				hint.style.color = '#e05545';
+			}
+		}
+
+		// 4. LIVE EMAIL VALIDATION
+		function validateEmail() {
+			var email = document.getElementById('email');
+			var icon = document.getElementById('emailIcon');
+			var hint = document.getElementById('emailHint');
+			var value = email.value.trim();
+
+			if (value.length === 0) {
+				email.classList.remove('is-valid', 'is-invalid');
+				icon.textContent = '';
+				hint.textContent = '';
+				return;
+			}
+
+			var regex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+			if (regex.test(value)) {
+				email.classList.add('is-valid');
+				email.classList.remove('is-invalid');
+				icon.textContent = '✓';
+				icon.className = 'validation-icon valid';
+				hint.textContent = 'Valid email address';
+				hint.style.color = '#0d7a6e';
+			} else {
+				email.classList.add('is-invalid');
+				email.classList.remove('is-valid');
+				icon.textContent = '✕';
+				icon.className = 'validation-icon invalid';
+				hint.textContent = 'Please enter a valid email (e.g., name@@example.com)';
+				hint.style.color = '#e05545';
+			}
+		}
+
+		// 5. LIVE PASSWORD STRENGTH METER
+		function checkPasswordStrength() {
+			var password = document.getElementById('passwordInput').value;
+			var bar = document.getElementById('strengthBar');
+			var label = document.getElementById('strengthLabel');
+
+			if (password.length === 0) {
+				bar.style.width = '0%';
+				label.textContent = '';
+				return;
+			}
+
+			var score = 0;
+			if (password.length >= 6) score++;
+			if (password.length >= 10) score++;
+			if (/[a-z]/.test(password)) score++;
+			if (/[A-Z]/.test(password)) score++;
+			if (/[0-9]/.test(password)) score++;
+			if (/[^a-zA-Z0-9]/.test(password)) score++;
+
+			var percent = (score / 6) * 100;
+			bar.style.width = percent + '%';
+
+			if (score <= 2) {
+				bar.style.background = '#e05545';
+				label.textContent = 'Weak password';
+				label.style.color = '#e05545';
+			} else if (score <= 4) {
+				bar.style.background = '#f5a623';
+				label.textContent = 'Medium password';
+				label.style.color = '#f5a623';
+			} else {
+				bar.style.background = '#0d7a6e';
+				label.textContent = 'Strong password ✓';
+				label.style.color = '#0d7a6e';
+			}
+		}
+
+		// 6. LIVE PASSWORD MATCH CHECK
+		function checkPasswordMatch() {
+			var password = document.getElementById('passwordInput').value;
+			var confirm = document.getElementById('confirmPasswordInput');
+			var hint = document.getElementById('matchHint');
+
+			if (confirm.value.length === 0) {
+				confirm.classList.remove('is-valid', 'is-invalid');
+				hint.textContent = '';
+				return;
+			}
+
+			if (password === confirm.value) {
+				confirm.classList.add('is-valid');
+				confirm.classList.remove('is-invalid');
+				hint.textContent = '✓ Passwords match';
+				hint.style.color = '#0d7a6e';
+			} else {
+				confirm.classList.add('is-invalid');
+				confirm.classList.remove('is-valid');
+				hint.textContent = '✕ Passwords do not match';
+				hint.style.color = '#e05545';
+			}
+		}
+
+		// 7. SYNC TERMS CHECKBOX (FIXED)
+		function syncTermsCheckbox(checkbox) {
+			var hidden = document.getElementById('AcceptTermsHidden');
+			if (hidden) {
+				hidden.value = checkbox.checked ? 'true' : 'false';
+			}
+			updateSubmitButton();
+		}
+
+		// 8. UPDATE SUBMIT BUTTON
+		function updateSubmitButton() {
+			var checkbox = document.getElementById('termsCheckbox');
+			var btn = document.getElementById('submitBtn');
+			var text = document.getElementById('submitText');
+
+			if (checkbox.checked) {
+				btn.disabled = false;
+				text.textContent = 'Create Account →';
+			} else {
+				btn.disabled = true;
+				text.textContent = 'Please accept the terms';
+			}
+		}
+
+		// 9. ACCEPT TERMS FROM MODAL (FIXED)
+		function acceptTermsAndClose(modalId) {
+			var checkbox = document.getElementById('termsCheckbox');
+			if (checkbox) {
+				checkbox.checked = true;
+				// Trigger the sync
+				syncTermsCheckbox(checkbox);
+			}
+
+			var modalEl = document.getElementById(modalId);
+			if (modalEl) {
+				var modal = bootstrap.Modal.getInstance(modalEl);
+				if (!modal) {
+					modal = new bootstrap.Modal(modalEl);
+				}
+				modal.hide();
+			}
+
+			setTimeout(function () {
+				document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+				document.body.classList.remove('modal-open');
+				document.body.style.overflow = '';
+				document.body.style.paddingRight = '';
+			}, 300);
+		}
+
+		// Initialize button state on page load
+		document.addEventListener('DOMContentLoaded', function () {
+			// Make sure the checkbox is in sync on load
+			var checkbox = document.getElementById('termsCheckbox');
+			if (checkbox) {
+				syncTermsCheckbox(checkbox);
+			}
+		});
+	</script>
+}

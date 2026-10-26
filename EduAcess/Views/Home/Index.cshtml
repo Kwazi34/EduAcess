@@ -1,0 +1,774 @@
+﻿@{
+	ViewBag.Title = "EduAccess - From matric to what comes next";
+}
+
+<style>
+	/* --- Global Overrides --- */
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	.container-fluid {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	/* --- General SaaS Styling (WARM BACKGROUNDS) --- */
+	body {
+		background-color: #faf9f6; /* Warm cream background, not stark white */
+		color: #1a2733;
+	}
+
+	.hero-saas {
+		padding: 2.5rem 0 3rem 0;
+		background-color: #faf9f6; /* Warm cream to match body */
+		border-bottom: 1px solid #eae7e0; /* Warmer border */
+	}
+
+		.hero-saas h1 {
+			font-size: 3.5rem;
+			font-weight: 800;
+			color: #1a2733;
+			line-height: 1.1;
+			letter-spacing: -1.5px;
+			margin-bottom: 1.5rem;
+		}
+
+		.hero-saas .lead-text {
+			font-size: 1.15rem;
+			color: #5a6571;
+			margin-bottom: 2rem;
+			max-width: 500px;
+		}
+
+	.badge-soft {
+		background-color: #e6f2f0;
+		color: #0d7a6e;
+		font-weight: 700;
+		font-size: 0.75rem;
+		letter-spacing: 1px;
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
+		text-transform: uppercase;
+		display: inline-block;
+		margin-bottom: 1.5rem;
+	}
+
+	.btn-edu-solid {
+		background-color: #0d7a6e;
+		color: #fff;
+		font-weight: 600;
+		border: 1px solid #0d7a6e;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+	}
+
+		.btn-edu-solid:hover {
+			background-color: #095e54;
+			color: #fff;
+		}
+
+	.btn-edu-outline {
+		background-color: transparent;
+		color: #0d7a6e;
+		font-weight: 600;
+		border: 1px solid #0d7a6e;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+	}
+
+		.btn-edu-outline:hover {
+			background-color: #f4f6f9;
+			color: #0d7a6e;
+		}
+
+	/* --- ANIMATED WORKSPACE DEMO --- */
+	.demo-wrapper {
+		position: relative;
+	}
+
+	.demo-workspace {
+		position: relative;
+		height: 420px;
+		width: 100%;
+		margin-top: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.demo-desktop {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 90%;
+		height: 400px;
+		display: flex;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	.demo-browser-bar {
+		height: 30px;
+		background: #f4f6f9;
+		border-bottom: 1px solid #eae7e0;
+		display: flex;
+		align-items: center;
+		padding: 0 1rem;
+		gap: 6px;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	.demo-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+	}
+
+		.demo-dot.red {
+			background: #ff5f56;
+		}
+
+		.demo-dot.yellow {
+			background: #ffbd2e;
+		}
+
+		.demo-dot.green {
+			background: #27c93f;
+		}
+
+	.demo-sidebar {
+		width: 180px;
+		border-right: 1px solid #eae7e0;
+		background: #ffffff;
+		padding-top: 40px;
+	}
+
+	.demo-main {
+		flex: 1;
+		background: #ffffff;
+		padding-top: 40px;
+		position: relative;
+	}
+
+	.demo-phone {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 180px;
+		height: 360px;
+		background: #ffffff;
+		border: 8px solid #1a2733;
+		border-radius: 2rem;
+		box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+		z-index: 3;
+		overflow: hidden;
+		transform: rotate(-2deg);
+		transition: all 0.5s ease-in-out;
+	}
+
+	.demo-stats {
+		position: absolute;
+		bottom: -20px;
+		right: 10px;
+		background: #fff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.5rem;
+		box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+		padding: 0.75rem 1rem;
+		display: flex;
+		gap: 1rem;
+		z-index: 4;
+	}
+
+	.demo-controls {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		align-items: center;
+	}
+
+	.demo-btn {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.25rem;
+		padding: 4px 12px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #5a6571;
+		cursor: pointer;
+		transition: 0.2s;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+	}
+
+		.demo-btn:hover {
+			background: #f4f6f9;
+			color: #0d7a6e;
+			border-color: #0d7a6e;
+		}
+
+		.demo-btn.active {
+			background: #0d7a6e;
+			color: white;
+			border-color: #0d7a6e;
+		}
+
+	.fade-slide-enter {
+		animation: fadeSlideIn 0.4s ease-out forwards;
+	}
+
+	@@keyframes fadeSlideIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* --- MOVING INSTITUTIONS MARQUEE --- */
+	.marquee {
+		overflow: hidden;
+		position: relative;
+		padding: 0.5rem 0;
+		-webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+		mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+	}
+
+	.marquee-track {
+		display: flex;
+		gap: 1rem;
+		width: max-content;
+		animation: marqueeScroll 25s linear infinite;
+	}
+
+	.marquee:hover .marquee-track {
+		animation-play-state: paused;
+	}
+
+	.marquee-item {
+		flex: 0 0 auto;
+		width: 200px;
+		height: 80px;
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.375rem;
+		box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 800;
+		font-size: 1.1rem;
+	}
+
+	@@keyframes marqueeScroll {
+		from {
+			transform: translateX(0);
+		}
+
+		to {
+			transform: translateX(calc(-50% - 0.5rem));
+		}
+	}
+
+	/* --- BOTTOM FEATURE STRIP --- */
+	.feature-strip {
+		border-bottom: 1px solid #eae7e0;
+		padding: 1.5rem 0;
+		background: #faf9f6;
+	}
+
+	.feature-strip-item {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		border-right: 1px solid #eae7e0;
+	}
+
+		.feature-strip-item:last-child {
+			border-right: none;
+		}
+
+		.feature-strip-item svg {
+			width: 24px;
+			height: 24px;
+			color: #0d7a6e;
+		}
+
+		.feature-strip-item h6 {
+			margin: 0;
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #1a2733;
+		}
+
+		.feature-strip-item p {
+			margin: 0;
+			font-size: 0.8rem;
+			color: #5a6571;
+		}
+
+	/* --- DARK FOOTER --- */
+	.site-footer {
+		background-color: #0f172a;
+		color: #94a3b8;
+		padding: 4rem 0 2rem 0;
+	}
+
+		.site-footer h5 {
+			color: #ffffff;
+			font-weight: 700;
+			margin-bottom: 1.5rem;
+			font-size: 1.1rem;
+		}
+
+		.site-footer a {
+			color: #94a3b8;
+			text-decoration: none;
+			display: block;
+			margin-bottom: 0.75rem;
+			transition: 0.2s;
+		}
+
+			.site-footer a:hover {
+				color: #ffffff;
+			}
+
+		.site-footer .brand-logo {
+			color: #ffffff;
+			font-weight: 800;
+			font-size: 1.5rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+
+			.site-footer .brand-logo::before {
+				content: '';
+				display: inline-block;
+				width: 12px;
+				height: 12px;
+				background-color: #0d7a6e;
+				border-radius: 50%;
+			}
+
+	/* --- LIVE STAT CARDS (WARM TONES) --- */
+	.live-stat-card {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		padding: 1.5rem;
+		height: 100%;
+		text-align: center;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+	}
+
+	.live-stat-value {
+		font-size: 2.5rem;
+		font-weight: 800;
+		color: #0d7a6e;
+		line-height: 1;
+		margin-bottom: 0.5rem;
+	}
+
+	.live-stat-label {
+		font-size: 0.95rem;
+		color: #5a6571;
+		font-weight: 600;
+	}
+
+	/* --- LIVE SECTIONS --- */
+	.live-section {
+		background-color: #ffffff;
+		border-top: 1px solid #eae7e0;
+		border-bottom: 1px solid #eae7e0;
+	}
+</style>
+
+<!-- 1. HERO SECTION -->
+<section class="hero-saas">
+	<div class="container">
+		<div class="row align-items-center">
+			<!-- Left Text -->
+			<div class="col-lg-5 mb-5 mb-lg-0">
+				<span class="badge-soft">Official Study & Funding Guide</span>
+				<h1>One platform to connect, manage and grow your future.</h1>
+				<p class="lead-text">Bring your marks, interests, and funding together with guided setup and local support. From matric to what comes next.</p>
+
+				<div class="d-flex gap-3">
+					<a href="@Url.Action("Register", "Account")" class="btn btn-edu-solid">Start your onboarding</a>
+					<a href="#features" class="btn btn-edu-outline">See how it works</a>
+				</div>
+
+				<div class="mt-4 d-flex gap-4 text-muted" style="font-size: 0.85rem;">
+					<span><svg width="14" height="14" fill="#0d7a6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Secure onboarding</span>
+					<span><svg width="14" height="14" fill="#0d7a6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Local support</span>
+					<span><svg width="14" height="14" fill="#0d7a6e" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" /></svg> Built for learners</span>
+				</div>
+			</div>
+
+			<!-- Right Animated Demo Workspace -->
+			<div class="col-lg-7">
+				<div class="demo-wrapper">
+					<div class="demo-controls">
+						<span class="badge bg-light text-success border border-success me-2" style="font-size: 0.65rem; background-color: #f0f7f4 !important; border-color: #cce5e2 !important;">
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loadingSpinner"></span>
+							Interactive demo
+						</span>
+						<button id="btnPause" class="demo-btn active">Pause</button>
+						<button id="btnReplay" class="demo-btn">Replay</button>
+					</div>
+
+					<div class="demo-workspace">
+						<div class="demo-desktop">
+							<div class="demo-browser-bar">
+								<div class="demo-dot red"></div>
+								<div class="demo-dot yellow"></div>
+								<div class="demo-dot green"></div>
+								<span style="font-size: 0.65rem; color: #a0abb5; margin-left: 10px;">EduAccess Workspace</span>
+							</div>
+
+							<div class="demo-sidebar d-none d-sm-block">
+								<div class="px-3 py-2 text-success fw-bold" style="font-size: 0.8rem;">Matches</div>
+								<div class="px-3 py-2 text-muted" style="font-size: 0.8rem;">Funding</div>
+								<div class="px-3 py-2 text-muted" style="font-size: 0.8rem;">Plan B</div>
+							</div>
+
+							<div class="demo-main p-3" id="desktop-content">
+								<!-- Content loaded by JS -->
+							</div>
+						</div>
+
+						<div class="demo-phone d-none d-md-block" id="phone-content">
+							<div class="p-2" style="background: #0d7a6e; color: white; text-align: center; font-size: 0.8rem; font-weight: bold;">
+								EduAccess
+							</div>
+							<div class="p-2 phone-body">
+								<!-- Content loaded by JS -->
+							</div>
+						</div>
+
+						<div class="demo-stats">
+							<div class="text-center border-end pe-3">
+								<small class="text-muted d-block" style="font-size: 0.7rem;">Options Matched</small>
+								<strong style="font-size: 1.2rem; color: #1a2733;">14</strong>
+							</div>
+							<div class="text-center border-end pe-3">
+								<small class="text-muted d-block" style="font-size: 0.7rem;">Bursaries</small>
+								<strong style="font-size: 1.2rem; color: #1a2733;">6</strong>
+							</div>
+							<div class="text-center">
+								<small class="text-muted d-block" style="font-size: 0.7rem;">Plan Bs</small>
+								<strong style="font-size: 1.2rem; color: #1a2733;">4</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 2. BOTTOM FEATURE STRIP -->
+<section class="feature-strip">
+	<div class="container">
+		<div class="row text-center text-md-start">
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+					<div>
+						<h6>Learner Onboarding</h6>
+						<p>Guided setup from start to finish</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+					<div>
+						<h6>Secure Data</h6>
+						<p>Marks stay on your device</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+					<div>
+						<h6>AI Guidance</h6>
+						<p>Personalized to your profile</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+					<div>
+						<h6>Real-time Updates</h6>
+						<p>Deadline reminders sent to you</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 3. LIVE STATS SECTION -->
+<section class="live-section py-5">
+	<div class="container">
+		<div class="text-center mb-5">
+			<h6 class="text-success fw-bold text-uppercase" style="letter-spacing: 1px;">EduAccess Live Data</h6>
+			<h2 class="fw-bold" style="font-size: 2.5rem;">Real numbers from our platform</h2>
+			<p class="text-muted">See how EduAccess is already helping learners.</p>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-md-3">
+				<div class="live-stat-card">
+					<div class="live-stat-value">@ViewBag.TotalUsers</div>
+					<div class="live-stat-label">Registered Users</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="live-stat-card">
+					<div class="live-stat-value">@ViewBag.TotalInstitutions</div>
+					<div class="live-stat-label">Institutions Listed</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="live-stat-card">
+					<div class="live-stat-value">@ViewBag.TotalBursaries</div>
+					<div class="live-stat-label">Bursaries Available</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="live-stat-card">
+					<div class="live-stat-value">@ViewBag.ActiveUsers</div>
+					<div class="live-stat-label">Active (Verified) Users</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 4. COVERAGE SECTION -->
+<section class="container py-5 mb-4">
+	<div class="text-center mb-4">
+		<h6 class="text-muted fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Funding and study options we cover</h6>
+	</div>
+
+	<div class="marquee">
+		<div class="marquee-track">
+			<div class="marquee-item" style="color: #0d7a6e;">NSFAS</div>
+			<div class="marquee-item" style="color: #1f78d1;">Universities</div>
+			<div class="marquee-item" style="color: #e05545;">TVET Colleges</div>
+			<div class="marquee-item" style="color: #f5a623;">Bursaries</div>
+			<div class="marquee-item" style="color: #6f42c1;">Private Colleges</div>
+			<div class="marquee-item" style="color: #198754;">Learnerships</div>
+			<!-- Duplicate -->
+			<div class="marquee-item" style="color: #0d7a6e;" aria-hidden="true">NSFAS</div>
+			<div class="marquee-item" style="color: #1f78d1;" aria-hidden="true">Universities</div>
+			<div class="marquee-item" style="color: #e05545;" aria-hidden="true">TVET Colleges</div>
+			<div class="marquee-item" style="color: #f5a623;" aria-hidden="true">Bursaries</div>
+			<div class="marquee-item" style="color: #6f42c1;" aria-hidden="true">Private Colleges</div>
+			<div class="marquee-item" style="color: #198754;" aria-hidden="true">Learnerships</div>
+		</div>
+	</div>
+</section>
+
+<!-- 5. BOTTOM CTA BANNER -->
+<section class="container mb-5">
+	<div class="bg-light rounded p-4 p-md-5 d-flex flex-column flex-md-row justify-content-between align-items-center" style="background-color: #f0f7f4 !important; border: 1px solid #cce5e2;">
+		<div class="mb-4 mb-md-0">
+			<h3 class="fw-bold mb-2" style="color: #0d7a6e;">Ready to connect your future?</h3>
+			<p class="text-muted mb-0">Let's bring your studies, funding, and career options together.</p>
+		</div>
+		<div class="d-flex gap-3">
+			<a href="@Url.Action("Register", "Account")" class="btn btn-edu-solid">Start your onboarding &rarr;</a>
+			<a href="@Url.Action("Login", "Account")" class="btn btn-edu-outline" style="background: #ffffff;">Log in</a>
+		</div>
+	</div>
+</section>
+
+@section Scripts {
+	<script>
+		// --- THE DEMO ANIMATION ENGINE ---
+		document.addEventListener("DOMContentLoaded", function () {
+			const desktopContent = document.getElementById('desktop-content');
+			const phoneContent = document.getElementById('phone-content').querySelector('.phone-body');
+			const btnPause = document.getElementById('btnPause');
+			const btnReplay = document.getElementById('btnReplay');
+			const spinner = document.getElementById('loadingSpinner');
+
+			const steps = [
+				{
+					name: "Profile Setup",
+					desktop: `
+							<div class="fade-slide-enter">
+								<div class="mb-3">
+									<small class="text-muted fw-bold">Step 1: Profile Setup</small>
+									<div class="d-flex align-items-center gap-2 mt-2">
+										<div class="bg-light rounded-circle" style="width: 30px; height: 30px;"></div>
+										<div>
+											<div class="fw-bold" style="font-size: 0.8rem;">Thandi M.</div>
+											<div class="text-muted" style="font-size: 0.7rem;">APS: 31</div>
+										</div>
+									</div>
+								</div>
+								<div class="bg-light p-2 rounded mb-2" style="max-width: 80%; background-color: #f4f6f9 !important;">
+									<small class="text-dark" style="font-size: 0.75rem;">Entering marks: English 71%, Maths 62%, Accounting 66%...</small>
+								</div>
+							</div>`,
+					phone: `
+							<div class="fade-slide-enter">
+								<small class="text-muted fw-bold" style="font-size: 0.65rem;">Tell us about you</small>
+								<div class="border rounded p-2 mt-1 mb-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<div class="d-flex justify-content-between mb-1"><span>English</span> <strong>71%</strong></div>
+									<div class="progress" style="height: 4px;"><div class="progress-bar bg-success" style="width: 71%;"></div></div>
+								</div>
+								<div class="border rounded p-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<div class="d-flex justify-content-between mb-1"><span>Maths</span> <strong>62%</strong></div>
+									<div class="progress" style="height: 4px;"><div class="progress-bar bg-success" style="width: 62%;"></div></div>
+								</div>
+							</div>`
+				},
+				{
+					name: "Matches",
+					desktop: `
+							<div class="fade-slide-enter">
+								<div class="mb-3">
+									<small class="text-muted fw-bold">Step 2: Finding Matches</small>
+									<div class="bg-success text-white p-2 rounded mb-2 mt-2" style="max-width: 80%;">
+										<small style="font-size: 0.75rem;">I found 14 options that fit your profile.</small>
+									</div>
+								</div>
+								<div class="mt-4 p-2 border rounded border-success">
+									<small class="text-success fw-bold d-block mb-1">Diploma: Business Mgmt</small>
+									<small class="text-muted" style="font-size: 0.7rem;">91% Match</small>
+								</div>
+							</div>`,
+					phone: `
+							<div class="fade-slide-enter">
+								<small class="text-muted fw-bold" style="font-size: 0.65rem;">Your matches</small>
+								<div class="border rounded p-2 mt-1 mb-2" style="font-size: 0.7rem; border-left: 3px solid #198754 !important; border-color: #eae7e0;">
+									<strong>Diploma: Business</strong>
+									<span class="text-success d-block mt-1">● Eligible</span>
+								</div>
+								<div class="border rounded p-2" style="font-size: 0.7rem; border-left: 3px solid #ffc107 !important; border-color: #eae7e0;">
+									<strong>BCom Accounting</strong>
+									<span class="text-warning d-block mt-1">● Plan B ready</span>
+								</div>
+							</div>`
+				},
+				{
+					name: "Funding",
+					desktop: `
+							<div class="fade-slide-enter">
+								<div class="mb-3">
+									<small class="text-muted fw-bold">Step 3: Funding</small>
+									<div class="bg-light p-2 rounded mb-2 mt-2" style="max-width: 90%; background-color: #f4f6f9 !important;">
+										<small class="text-dark" style="font-size: 0.75rem;">Checking NSFAS readiness...</small>
+									</div>
+									<div class="bg-success text-white p-2 rounded mb-2 ms-auto" style="max-width: 80%;">
+										<small style="font-size: 0.75rem;">Likely Eligible for NSFAS!</small>
+									</div>
+								</div>
+							</div>`,
+					phone: `
+							<div class="fade-slide-enter">
+								<small class="text-muted fw-bold" style="font-size: 0.65rem;">Funding Matcher</small>
+								<div class="border rounded p-2 mt-1 mb-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<strong class="text-success">NSFAS</strong>
+									<span class="text-muted d-block mt-1" style="font-size: 0.6rem;">Likely Eligible</span>
+								</div>
+								<div class="border rounded p-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<strong class="text-warning">4 Bursaries</strong>
+									<span class="text-muted d-block mt-1" style="font-size: 0.6rem;">Closing in 5 days</span>
+								</div>
+							</div>`
+				},
+				{
+					name: "Plan B",
+					desktop: `
+							<div class="fade-slide-enter">
+								<div class="mb-3">
+									<small class="text-muted fw-bold">Step 4: Plan B</small>
+									<div class="bg-warning text-dark p-2 rounded mb-2 mt-2" style="max-width: 80%;">
+										<small style="font-size: 0.75rem;">You are 3 APS points short for BCom. Generating Plan B routes...</small>
+									</div>
+								</div>
+								<div class="mt-4 p-2 border rounded border-warning">
+									<small class="text-warning fw-bold d-block mb-1">Extended Programme</small>
+									<small class="text-muted" style="font-size: 0.7rem;">Same degree, +1 year support</small>
+								</div>
+							</div>`,
+					phone: `
+							<div class="fade-slide-enter">
+								<small class="text-muted fw-bold" style="font-size: 0.65rem;">Plan B pathways</small>
+								<div class="border rounded p-2 mt-1 mb-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<strong>Extended BCom</strong>
+									<span class="text-muted d-block mt-1" style="font-size: 0.6rem;">+1 year</span>
+								</div>
+								<div class="border rounded p-2" style="font-size: 0.7rem; border-color: #eae7e0 !important;">
+									<strong>TVET N4-N6</strong>
+									<span class="text-muted d-block mt-1" style="font-size: 0.6rem;">2-3 years</span>
+								</div>
+							</div>`
+				}
+			];
+
+			let currentStep = 0;
+			let intervalId = null;
+			let isPlaying = true;
+
+			function renderStep() {
+				desktopContent.innerHTML = steps[currentStep].desktop;
+				phoneContent.innerHTML = steps[currentStep].phone;
+				currentStep = (currentStep + 1) % steps.length;
+			}
+
+			function startAutoplay() {
+				if (intervalId) clearInterval(intervalId);
+				intervalId = setInterval(renderStep, 3000);
+				btnPause.textContent = "Pause";
+				btnPause.classList.add("active");
+				spinner.style.display = "inline-block";
+				isPlaying = true;
+			}
+
+			function pauseAutoplay() {
+				clearInterval(intervalId);
+				intervalId = null;
+				btnPause.textContent = "Play";
+				btnPause.classList.remove("active");
+				spinner.style.display = "none";
+				isPlaying = false;
+			}
+
+			btnPause.addEventListener("click", function () {
+				if (isPlaying) { pauseAutoplay(); } else { startAutoplay(); }
+			});
+
+			btnReplay.addEventListener("click", function () {
+				pauseAutoplay();
+				currentStep = 0;
+				renderStep();
+				startAutoplay();
+			});
+
+			renderStep();
+			startAutoplay();
+		});
+	</script>
+}

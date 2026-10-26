@@ -1,0 +1,536 @@
+﻿@{
+	ViewBag.Title = "About EduAccess";
+}
+
+<style>
+	/* --- Global Match to Homepage --- */
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	body {
+		background-color: #faf9f6;
+		color: #1a2733;
+	}
+
+	/* --- Hero Section --- */
+	.about-hero {
+		padding: 5rem 0 4rem 0;
+		background-color: #faf9f6;
+		overflow: hidden;
+	}
+
+	.badge-soft {
+		background-color: #e6f2f0;
+		color: #0d7a6e;
+		font-weight: 700;
+		font-size: 0.75rem;
+		letter-spacing: 1px;
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
+		text-transform: uppercase;
+		display: inline-block;
+		margin-bottom: 1.5rem;
+		border: 1px solid #cce5e2;
+	}
+
+	.about-hero h1 {
+		font-size: 3.5rem;
+		font-weight: 900;
+		color: #1a2733;
+		line-height: 1.05;
+		letter-spacing: -1.5px;
+		margin-bottom: 1.5rem;
+	}
+
+	.about-hero .lead-text {
+		font-size: 1.15rem;
+		color: #5a6571;
+		line-height: 1.7;
+		max-width: 500px;
+		margin-bottom: 2rem;
+	}
+
+	/* --- Hero Visual with Cartoon --- */
+	.hero-visual {
+		position: relative;
+		padding-top: 40px;
+	}
+
+	.hero-cartoon-wrapper {
+		position: relative;
+		z-index: 2;
+	}
+
+		.hero-cartoon-wrapper::before {
+			content: '';
+			position: absolute;
+			top: 20px;
+			right: -20px;
+			bottom: -20px;
+			left: 20px;
+			background: #f0f7f4;
+			border-radius: 0.75rem;
+			z-index: -1;
+			border: 1px solid #cce5e2;
+		}
+
+	/* The cartoon SVG container */
+	.cartoon-hero {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+		padding: 2rem;
+		width: 100%;
+	}
+
+	/* --- Feature Strip --- */
+	.feature-strip {
+		border-top: 1px solid #eae7e0;
+		border-bottom: 1px solid #eae7e0;
+		padding: 1.5rem 0;
+		background: #faf9f6;
+	}
+
+	.feature-strip-item {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		border-right: 1px solid #eae7e0;
+	}
+
+		.feature-strip-item:last-child {
+			border-right: none;
+		}
+
+		.feature-strip-item svg {
+			width: 24px;
+			height: 24px;
+			color: #0d7a6e;
+			flex-shrink: 0;
+		}
+
+		.feature-strip-item h6 {
+			margin: 0;
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #1a2733;
+		}
+
+		.feature-strip-item p {
+			margin: 0;
+			font-size: 0.8rem;
+			color: #5a6571;
+		}
+
+	/* --- Solution Breakdown --- */
+	.solution-section {
+		padding: 5rem 0;
+		background-color: #ffffff;
+	}
+
+		.solution-section h2 {
+			font-size: 2.5rem;
+			font-weight: 800;
+			color: #1a2733;
+			letter-spacing: -1px;
+			margin-bottom: 1rem;
+			text-align: center;
+		}
+
+		.solution-section p.subtitle {
+			color: #5a6571;
+			font-size: 1.1rem;
+			text-align: center;
+			margin-bottom: 3rem;
+			max-width: 700px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+	.solution-card {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		padding: 2rem;
+		height: 100%;
+		transition: transform 0.2s, box-shadow 0.2s;
+		text-align: center;
+	}
+
+		.solution-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+			border-color: #cce5e2;
+		}
+
+	/* Cartoon illustration per solution */
+	.cartoon-solution {
+		width: 100%;
+		height: 120px;
+		margin-bottom: 1.25rem;
+	}
+
+	.solution-card h4 {
+		font-weight: 800;
+		color: #1a2733;
+		font-size: 1.15rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.solution-card p {
+		color: #5a6571;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	/* --- Values Section --- */
+	.values-section {
+		padding: 5rem 0;
+		background-color: #faf9f6;
+	}
+
+		.values-section h2 {
+			font-size: 2.5rem;
+			font-weight: 800;
+			color: #1a2733;
+			letter-spacing: -1px;
+			margin-bottom: 3rem;
+			text-align: center;
+		}
+
+	.value-box {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.75rem;
+		padding: 2rem;
+		height: 100%;
+		position: relative;
+		overflow: hidden;
+		text-align: center;
+		transition: all 0.3s;
+	}
+
+		.value-box:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 20px 40px rgba(13, 122, 110, 0.1);
+			border-color: #cce5e2;
+		}
+
+		.value-box h4 {
+			font-weight: 800;
+			color: #1a2733;
+			font-size: 1.15rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.value-box p {
+			color: #5a6571;
+			font-size: 0.95rem;
+			line-height: 1.6;
+			margin: 0;
+		}
+
+	/* Cartoon for values */
+	.cartoon-value {
+		width: 100px;
+		height: 100px;
+		margin: 0 auto 1.25rem auto;
+	}
+
+	/* --- Responsive --- */
+	@@media (max-width: 768px) {
+		.about-hero h1 {
+			font-size: 2.5rem;
+		}
+
+		.hero-visual {
+			margin-top: 2rem;
+		}
+
+		.feature-strip-item {
+			border-right: none;
+			margin-bottom: 1rem;
+		}
+	}
+</style>
+
+<!-- 1. Hero Section with Cartoon -->
+<section class="about-hero">
+	<div class="container">
+		<div class="row align-items-center">
+			<!-- Left Text -->
+			<div class="col-lg-6 mb-5 mb-lg-0">
+				<span class="badge-soft">About EduAccess</span>
+				<h1>One platform to connect, manage and grow your future.</h1>
+				<p class="lead-text">
+					We are not replacing NSFAS. We are helping learners understand their options and navigate the journey from matric to higher education.
+				</p>
+				<div class="d-flex gap-3">
+					<a href="@Url.Action("Register", "Account")" class="btn btn-edu-solid">Start your onboarding</a>
+					<a href="@Url.Action("Contact", "Home")" class="btn btn-edu-outline">Contact us</a>
+				</div>
+			</div>
+
+			<!-- Right Cartoon -->
+			<div class="col-lg-6 hero-visual">
+				<div class="hero-cartoon-wrapper">
+					<div class="cartoon-hero">
+						<svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+							<!-- Background blob -->
+							<ellipse cx="250" cy="200" rx="220" ry="140" fill="#f0f7f4" />
+
+							<!-- Sun/Star element -->
+							<circle cx="430" cy="60" r="25" fill="#f5a623" opacity="0.8" />
+							<circle cx="430" cy="60" r="15" fill="#fef5e7" />
+
+							<!-- Path/Trail -->
+							<path d="M 100 280 Q 200 250 300 200 T 450 120" stroke="#0d7a6e" stroke-width="3" stroke-dasharray="8,6" fill="none" opacity="0.5" />
+
+							<!-- Student 1 (left) -->
+							<g transform="translate(120, 180)">
+								<!-- Body -->
+								<rect x="0" y="30" width="40" height="50" rx="8" fill="#0d7a6e" />
+								<!-- Head -->
+								<circle cx="20" cy="15" r="18" fill="#fce0c2" />
+								<!-- Hair -->
+								<path d="M 2 15 Q 20 -5 38 15 L 38 5 Q 20 -10 2 5 Z" fill="#1a2733" />
+								<!-- Eyes -->
+								<circle cx="14" cy="15" r="2" fill="#1a2733" />
+								<circle cx="26" cy="15" r="2" fill="#1a2733" />
+								<!-- Smile -->
+								<path d="M 14 22 Q 20 26 26 22" stroke="#1a2733" stroke-width="1.5" fill="none" stroke-linecap="round" />
+								<!-- Backpack -->
+								<rect x="-8" y="35" width="15" height="30" rx="3" fill="#f5a623" />
+							</g>
+
+							<!-- Student 2 (center) -->
+							<g transform="translate(240, 160)">
+								<rect x="0" y="30" width="40" height="50" rx="8" fill="#1f78d1" />
+								<circle cx="20" cy="15" r="18" fill="#fce0c2" />
+								<path d="M 2 15 Q 20 -5 38 15 L 38 5 Q 20 -10 2 5 Z" fill="#1a2733" />
+								<circle cx="14" cy="15" r="2" fill="#1a2733" />
+								<circle cx="26" cy="15" r="2" fill="#1a2733" />
+								<path d="M 14 22 Q 20 26 26 22" stroke="#1a2733" stroke-width="1.5" fill="none" stroke-linecap="round" />
+								<rect x="-8" y="35" width="15" height="30" rx="3" fill="#0d7a6e" />
+							</g>
+
+							<!-- Student 3 (right) -->
+							<g transform="translate(350, 150)">
+								<rect x="0" y="30" width="40" height="50" rx="8" fill="#e05545" />
+								<circle cx="20" cy="15" r="18" fill="#fce0c2" />
+								<path d="M 2 15 Q 20 -5 38 15 L 38 5 Q 20 -10 2 5 Z" fill="#1a2733" />
+								<circle cx="14" cy="15" r="2" fill="#1a2733" />
+								<circle cx="26" cy="15" r="2" fill="#1a2733" />
+								<path d="M 14 22 Q 20 26 26 22" stroke="#1a2733" stroke-width="1.5" fill="none" stroke-linecap="round" />
+							</g>
+
+							<!-- Building / University -->
+							<g transform="translate(380, 60)">
+								<rect x="0" y="20" width="80" height="60" rx="4" fill="#eae7e0" />
+								<rect x="0" y="20" width="80" height="10" fill="#0d7a6e" />
+								<!-- Columns -->
+								<rect x="10" y="35" width="6" height="40" fill="#ffffff" />
+								<rect x="30" y="35" width="6" height="40" fill="#ffffff" />
+								<rect x="50" y="35" width="6" height="40" fill="#ffffff" />
+								<rect x="68" y="35" width="6" height="40" fill="#ffffff" />
+								<!-- Roof -->
+								<polygon points="40,0 0,20 80,20" fill="#0d7a6e" />
+								<!-- Flag -->
+								<rect x="38" y="-15" width="2" height="15" fill="#1a2733" />
+								<polygon points="40,-15 55,-10 40,-5" fill="#f5a623" />
+							</g>
+
+							<!-- Grass -->
+							<ellipse cx="250" cy="300" rx="220" ry="20" fill="#e6f2f0" />
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 2. Feature Strip -->
+<section class="feature-strip">
+	<div class="container">
+		<div class="row text-center text-md-start">
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+					<div>
+						<h6>Learner Onboarding</h6>
+						<p>Guided setup from start to finish</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+					<div>
+						<h6>Secure Data</h6>
+						<p>Marks stay on your device</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 mb-3 mb-md-0">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+					<div>
+						<h6>AI Guidance</h6>
+						<p>Personalized to your profile</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="feature-strip-item justify-content-center justify-content-md-start">
+					<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+					<div>
+						<h6>Real-time Updates</h6>
+						<p>Deadline reminders sent to you</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 3. Solution Breakdown with Cartoons -->
+<section class="solution-section">
+	<div class="container">
+		<h2>Our solution</h2>
+		<p class="subtitle">EduAccess is an AI-powered guide that turns marks, interests, and finances into a personal, step-by-step path from matric to higher education.</p>
+
+		<div class="row g-4">
+			<!-- Discover -->
+			<div class="col-md-3">
+				<div class="solution-card">
+					<svg class="cartoon-solution" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="100" cy="60" r="50" fill="#e6f2f0" />
+						<!-- Compass -->
+						<circle cx="100" cy="60" r="35" fill="#ffffff" stroke="#0d7a6e" stroke-width="3" />
+						<polygon points="100,30 108,60 100,55 92,60" fill="#e05545" />
+						<polygon points="100,90 92,60 100,65 108,60" fill="#1a2733" />
+						<circle cx="100" cy="60" r="4" fill="#0d7a6e" />
+					</svg>
+					<h4>Discover</h4>
+					<p>Universities, TVET colleges, and more in one place — including options you hadn't considered.</p>
+				</div>
+			</div>
+			<!-- Qualify -->
+			<div class="col-md-3">
+				<div class="solution-card">
+					<svg class="cartoon-solution" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="100" cy="60" r="50" fill="#eef5fc" />
+						<!-- Checklist -->
+						<rect x="60" y="30" width="80" height="60" rx="6" fill="#ffffff" stroke="#1f78d1" stroke-width="3" />
+						<path d="M 75 50 L 82 57 L 95 44" stroke="#0d7a6e" stroke-width="3" fill="none" stroke-linecap="round" />
+						<line x1="105" y1="50" x2="125" y2="50" stroke="#1a2733" stroke-width="2" />
+						<path d="M 75 68 L 82 75 L 95 62" stroke="#0d7a6e" stroke-width="3" fill="none" stroke-linecap="round" />
+						<line x1="105" y1="68" x2="125" y2="68" stroke="#1a2733" stroke-width="2" />
+					</svg>
+					<h4>Qualify</h4>
+					<p>APS calculation and subject-requirement checks tell you exactly what you can apply for today.</p>
+				</div>
+			</div>
+			<!-- Fund -->
+			<div class="col-md-3">
+				<div class="solution-card">
+					<svg class="cartoon-solution" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="100" cy="60" r="50" fill="#fff8eb" />
+						<!-- Money bag -->
+						<path d="M 70 90 Q 70 40 100 30 Q 130 40 130 90 Z" fill="#f5a623" stroke="#c98a18" stroke-width="2" />
+						<path d="M 85 30 Q 100 20 115 30" stroke="#c98a18" stroke-width="3" fill="none" stroke-linecap="round" />
+						<!-- Dollar sign -->
+						<text x="100" y="72" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="Arial">R</text>
+					</svg>
+					<h4>Fund</h4>
+					<p>NSFAS readiness plus matched bursaries, deadlines, and the documents you'll need.</p>
+				</div>
+			</div>
+			<!-- Pivot -->
+			<div class="col-md-3">
+				<div class="solution-card">
+					<svg class="cartoon-solution" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="100" cy="60" r="50" fill="#fcebe9" />
+						<!-- Signpost with two directions -->
+						<rect x="97" y="40" width="6" height="60" fill="#1a2733" />
+						<rect x="50" y="45" width="55" height="15" rx="3" fill="#0d7a6e" />
+						<polygon points="105,45 115,52.5 105,60" fill="#0d7a6e" />
+						<rect x="95" y="70" width="55" height="15" rx="3" fill="#e05545" />
+						<polygon points="95,70 85,77.5 95,85" fill="#e05545" />
+					</svg>
+					<h4>Pivot</h4>
+					<p>When the first choice is out of reach, we generate alternative routes with time and cost.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 4. Values Section with Cartoons -->
+<section class="values-section">
+	<div class="container">
+		<h2>What we stand for</h2>
+		<div class="row g-4">
+			<!-- Free for learners -->
+			<div class="col-md-4">
+				<div class="value-box">
+					<svg class="cartoon-value" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="45" fill="#e6f2f0" />
+						<!-- Free tag -->
+						<rect x="25" y="35" width="50" height="30" rx="4" fill="#0d7a6e" />
+						<circle cx="30" cy="35" r="3" fill="#ffffff" />
+						<text x="50" y="55" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="Arial">FREE</text>
+					</svg>
+					<h4>Free for learners. Always.</h4>
+					<p>The people we serve should never be the product. EduAccess will always be free for matriculants and their families.</p>
+				</div>
+			</div>
+			<!-- Honest -->
+			<div class="col-md-4">
+				<div class="value-box">
+					<svg class="cartoon-value" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="45" fill="#eef5fc" />
+						<!-- Shield -->
+						<path d="M 50 20 L 75 30 L 75 50 Q 75 75 50 85 Q 25 75 25 50 L 25 30 Z" fill="#1f78d1" />
+						<!-- Checkmark -->
+						<path d="M 40 50 L 48 58 L 62 42" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+					<h4>Honest about uncertainty.</h4>
+					<p>Every claim we show carries a source and a last-verified date. When we're unsure, we say so and point you to the institution.</p>
+				</div>
+			</div>
+			<!-- Complement NSFAS -->
+			<div class="col-md-4">
+				<div class="value-box">
+					<svg class="cartoon-value" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="45" fill="#fff8eb" />
+						<!-- Handshake -->
+						<path d="M 20 60 Q 30 40 45 55 Q 55 65 65 50 Q 75 40 80 55" stroke="#f5a623" stroke-width="6" fill="none" stroke-linecap="round" />
+						<circle cx="45" cy="55" r="5" fill="#0d7a6e" />
+						<circle cx="65" cy="50" r="5" fill="#0d7a6e" />
+					</svg>
+					<h4>Complement NSFAS, never replace.</h4>
+					<p>NSFAS funds eligible students once they have a place to study. We help learners find that place, understand the requirements, and prepare to apply.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 5. Final CTA Banner -->
+<div class="container pb-5">
+	<div class="bg-light rounded p-4 p-md-5 d-flex flex-column flex-md-row justify-content-between align-items-center" style="background-color: #f0f7f4 !important; border: 1px solid #cce5e2;">
+		<div class="mb-4 mb-md-0">
+			<h3 class="fw-bold mb-2" style="color: #0d7a6e;">Ready to find your way?</h3>
+			<p class="text-muted mb-0">Start your journey today. No account needed to begin.</p>
+		</div>
+		<div class="d-flex gap-3">
+			<a href="@Url.Action("Register", "Account")" class="btn btn-edu-solid">Start your onboarding &rarr;</a>
+			<a href="@Url.Action("Contact", "Home")" class="btn btn-edu-outline" style="background: #ffffff;">Contact us</a>
+		</div>
+	</div>
+</div>

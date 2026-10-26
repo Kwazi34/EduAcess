@@ -1,0 +1,485 @@
+﻿@model EduAcess.Models.Bursary
+@{
+	ViewBag.Title = Model.Name;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var isLoggedIn = (bool)ViewBag.IsLoggedIn;
+	var isOpen = Model.ClosingDate.HasValue && Model.ClosingDate >= DateTime.Now;
+
+	// Prepare the date string for JavaScript securely
+	string closeDateString = Model.ClosingDate.HasValue
+		? Model.ClosingDate.Value.ToString("yyyy-MM-ddTHH:mm:ss")
+		: "2099-12-31T23:59:59";
+}
+
+<style>
+	body {
+		background-color: #f8f9fa;
+		font-family: 'Inter', -apple-system, sans-serif;
+	}
+
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	/* Hero */
+	.detail-hero {
+		background: linear-gradient(135deg, #095e54 0%, #0d7a6e 50%, #20c997 100%);
+		color: #fff;
+		padding: 3rem 0 5rem 0;
+		position: relative;
+		overflow: hidden;
+	}
+
+		.detail-hero::after {
+			content: '';
+			position: absolute;
+			bottom: -50px;
+			right: -50px;
+			width: 400px;
+			height: 400px;
+			background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+			border-radius: 50%;
+		}
+
+		.detail-hero .breadcrumb {
+			color: rgba(255,255,255,0.8);
+			text-decoration: none;
+			font-size: 0.9rem;
+		}
+
+			.detail-hero .breadcrumb:hover {
+				color: #fff;
+			}
+
+		.detail-hero h1 {
+			font-size: 2.2rem;
+			font-weight: 800;
+			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
+			position: relative;
+		}
+
+		.detail-hero .provider {
+			font-size: 1.1rem;
+			opacity: 0.9;
+			position: relative;
+		}
+
+	/* Main Card */
+	.detail-card {
+		background: #fff;
+		border-radius: 1rem;
+		padding: 2rem;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+		margin-top: -3rem;
+		position: relative;
+		z-index: 10;
+	}
+
+	/* Detail Rows */
+	.detail-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid #f0f2f5;
+	}
+
+		.detail-row:last-child {
+			border-bottom: none;
+		}
+
+	.detail-label {
+		color: #5a6571;
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.detail-value {
+		font-weight: 700;
+		color: #1a2733;
+		text-align: right;
+		max-width: 60%;
+	}
+
+	/* Live Countdown Box */
+	.countdown-box {
+		background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%);
+		color: white;
+		border-radius: 1rem;
+		padding: 1.5rem;
+		text-align: center;
+		box-shadow: 0 10px 25px rgba(13, 122, 110, 0.3);
+		position: relative;
+		overflow: hidden;
+	}
+
+		.countdown-box.closed {
+			background: #e9ecef;
+			color: #6c757d;
+			box-shadow: none;
+			border: 1px solid #dee2e6;
+		}
+
+	.countdown-title {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		opacity: 0.9;
+		margin-bottom: 1rem;
+	}
+
+	.countdown-timer {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+	}
+
+	.countdown-unit {
+		background: rgba(255,255,255,0.2);
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+		min-width: 70px;
+	}
+
+		.countdown-unit strong {
+			display: block;
+			font-size: 2rem;
+			font-weight: 800;
+			line-height: 1;
+		}
+
+		.countdown-unit span {
+			font-size: 0.7rem;
+			opacity: 0.8;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+	.countdown-box.closed .countdown-unit {
+		background: #f8f9fa;
+	}
+
+	/* Action Buttons */
+	.btn-apply-large {
+		background-color: #0d7a6e;
+		color: #fff;
+		font-weight: 700;
+		border: none;
+		border-radius: 0.5rem;
+		padding: 1rem 2rem;
+		text-decoration: none;
+		display: block;
+		text-align: center;
+		font-size: 1.05rem;
+		transition: 0.2s;
+		width: 100%;
+	}
+
+		.btn-apply-large:hover {
+			background-color: #095e54;
+			color: #fff;
+			transform: translateY(-2px);
+		}
+
+	.btn-disabled {
+		background-color: #e9ecef;
+		color: #6c757d;
+		border-radius: 0.5rem;
+		padding: 1rem 2rem;
+		text-align: center;
+		font-size: 1.05rem;
+		font-weight: 600;
+	}
+
+	.btn-outline-action {
+		background-color: transparent;
+		color: #0d7a6e;
+		border: 1px solid #0d7a6e;
+		border-radius: 0.5rem;
+		padding: 0.75rem 1rem;
+		text-align: center;
+		font-size: 0.9rem;
+		font-weight: 600;
+		transition: 0.2s;
+		width: 100%;
+	}
+
+		.btn-outline-action:hover {
+			background-color: #0d7a6e;
+			color: #fff;
+		}
+
+	/* Eligibility Banner */
+	.eligibility-banner {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		margin-bottom: 1.5rem;
+		border-left: 4px solid;
+	}
+
+		.eligibility-banner.likely {
+			background: #f0f7f4;
+			border-color: #0d7a6e;
+		}
+
+		.eligibility-banner.not-likely {
+			background: #fff8eb;
+			border-color: #f5a623;
+		}
+
+		.eligibility-banner svg {
+			flex-shrink: 0;
+		}
+</style>
+
+<!-- Hero -->
+<section class="detail-hero">
+	<div class="container">
+		<a href="@Url.Action("Index", "Funding")" class="breadcrumb">&larr; Back to all funding</a>
+		<h1>@Model.Name</h1>
+		<div class="provider">@Model.Provider</div>
+	</div>
+</section>
+
+<!-- Detail Card -->
+<div class="container pb-5">
+	<div class="detail-card">
+		<div class="row g-4">
+
+			<!-- Left: Details -->
+			<div class="col-md-7">
+
+				<!-- Eligibility Banner (Only if Logged In) -->
+				@if (isLoggedIn)
+				{
+					<div class="eligibility-banner likely">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d7a6e" viewBox="0 0 16 16">
+							<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+						</svg>
+						<div>
+							<strong class="text-dark">This bursary might be a great fit for you!</strong><br>
+							<span class="text-muted small">Based on your profile, you match the field of study for this bursary.</span>
+						</div>
+					</div>
+				}
+
+				<h4 class="fw-bold mb-3">Bursary Details</h4>
+
+				<div class="detail-row">
+					<span class="detail-label">Provider</span>
+					<span class="detail-value">@Model.Provider</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Field of Study</span>
+					<span class="detail-value">@Model.FieldOfStudy</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Opening Date</span>
+					<span class="detail-value">@(Model.OpeningDate?.ToString("dd MMM yyyy") ?? "To be confirmed")</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Closing Date</span>
+					<span class="detail-value">@(Model.ClosingDate?.ToString("dd MMM yyyy") ?? "To be confirmed")</span>
+				</div>
+				<div class="detail-row">
+					<span class="detail-label">Status</span>
+					<span class="detail-value">
+						@if (isOpen)
+						{<span style="color: #0d7a6e;">● Open</span> }
+						else
+						{ <span style="color: #e05545;">● Closed</span>}
+					</span>
+				</div>
+
+				<h4 class="fw-bold mt-4 mb-3">Description</h4>
+				<p class="text-muted" style="font-size: 1rem; line-height: 1.6;">@Model.Description</p>
+
+				<h4 class="fw-bold mt-4 mb-3">Documents Required</h4>
+				<ul class="text-muted" style="line-height: 1.8; font-size: 0.95rem;">
+					<li>Certified copy of your ID</li>
+					<li>Latest matric results or academic transcript</li>
+					<li>Proof of household income (payslips or SASSA letter)</li>
+					<li>Motivation letter (some providers)</li>
+					<li>Proof of registration at a recognised institution</li>
+				</ul>
+			</div>
+
+			<!-- Right: Live Countdown & Actions -->
+			<div class="col-md-5">
+
+				<!-- LIVE COUNTDOWN -->
+				@if (isOpen)
+				{
+					<div class="countdown-box">
+						<div class="countdown-title">🔥 Closing In</div>
+						<div class="countdown-timer" id="liveCountdown">
+							<div class="countdown-unit">
+								<strong id="daysLeft">00</strong>
+								<span>Days</span>
+							</div>
+							<div class="countdown-unit">
+								<strong id="hoursLeft">00</strong>
+								<span>Hours</span>
+							</div>
+							<div class="countdown-unit">
+								<strong id="minsLeft">00</strong>
+								<span>Mins</span>
+							</div>
+						</div>
+					</div>
+				}
+				else
+				{
+					<div class="countdown-box closed">
+						<div class="countdown-title">Application Period</div>
+						<h3 class="fw-bold mt-2 mb-0">Closed</h3>
+						<p class="small mb-0">This bursary is no longer accepting applications.</p>
+					</div>
+				}
+
+				<!-- Action Buttons -->
+				<div class="mt-4">
+					@if (isOpen && !string.IsNullOrEmpty(Model.Website))
+					{
+						<a href="@Model.Website" target="_blank" rel="noopener noreferrer" class="btn-apply-large">
+							Apply on @Model.Provider &rarr;
+						</a>
+						<p class="text-muted small mt-3 text-center">
+							You'll be redirected to the official @Model.Provider website.
+						</p>
+					}
+					else if (!isOpen)
+					{
+						<div class="btn-disabled">Applications Closed</div>
+						<p class="text-muted small mt-3 text-center">
+							Bookmark this bursary and check back when it reopens next year.
+						</p>
+					}
+					else
+					{
+						<div class="btn-disabled">Application link not available yet</div>
+					}
+				</div>
+
+				<!-- SHARE BUTTON -->
+				<div class="mt-3 d-flex gap-2">
+					<button onclick="shareBursary()" class="btn-outline-action">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+							<path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
+						</svg>
+						Share this
+					</button>
+					<button onclick="saveBursary(this)" class="btn-outline-action" id="saveBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+							<path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zm8 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+						</svg>
+						Save for Later
+					</button>
+				</div>
+
+				<!-- Profile Tips -->
+				<div class="mt-4 pt-4 border-top">
+					@if (isLoggedIn)
+					{
+						<p class="text-muted small mb-2">
+							<strong>Tip:</strong> Make sure your household income is up to date on your dashboard.
+						</p>
+						<a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary w-100">
+							Update my profile
+						</a>
+					}
+					else
+					{
+						<p class="text-muted small mb-2">
+							<strong>Tip:</strong> Create a free EduAccess account to see personalised funding matches.
+						</p>
+						<a href="@Url.Action("Register", "Account")" class="btn btn-outline-secondary w-100">
+							Create free account
+						</a>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+        // --- LIVE COUNTDOWN TIMER ---
+        // We read the date safely from Razor and convert it to JS
+        var closeDateStr = "@closeDateString";
+        var closeDate = new Date(closeDateStr);
+
+        function updateTimer() {
+            var now = new Date();
+            var diff = closeDate - now;
+
+            // If the time is up or past
+            if (diff <= 0) {
+                var dEl = document.getElementById("daysLeft");
+                var hEl = document.getElementById("hoursLeft");
+                var mEl = document.getElementById("minsLeft");
+                if(dEl) dEl.innerText = "00";
+                if(hEl) hEl.innerText = "00";
+                if(mEl) mEl.innerText = "00";
+                return;
+            }
+
+            var d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            var h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            var dEl = document.getElementById("daysLeft");
+            var hEl = document.getElementById("hoursLeft");
+            var mEl = document.getElementById("minsLeft");
+
+            if(dEl && hEl && mEl) {
+                dEl.innerText = d.toString().padStart(2, "0");
+                hEl.innerText = h.toString().padStart(2, "0");
+                mEl.innerText = m.toString().padStart(2, "0");
+            }
+        }
+
+        // Only start the interval if the element exists (i.e. it's open)
+        if (document.getElementById("daysLeft")) {
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        // --- SHARE FUNCTION ---
+        function shareBursary() {
+            var link = window.location.href;
+            var title = "@Html.Raw(Model.Name)";
+            var text = "Check out this bursary on EduAccess: " + title;
+
+            if (navigator.share) {
+                navigator.share({ title: title, text: text, url: link }).catch(err => console.log(err));
+            } else {
+                navigator.clipboard.writeText(link).then(function() {
+                    alert('🔗 Link copied! Share this bursary with your friends:\n' + link);
+                });
+            }
+        }
+
+        // --- SAVE FOR LATER (UI ONLY) ---
+        function saveBursary(btn) {
+            if (btn.classList.contains('saved')) {
+                btn.classList.remove('saved');
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = "#0d7a6e";
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1"><path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zm8 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg> Save for Later';
+            } else {
+                btn.classList.add('saved');
+                btn.style.backgroundColor = "#0d7a6e";
+                btn.style.color = "white";
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg> Saved!';
+            }
+        }
+	</script>
+}

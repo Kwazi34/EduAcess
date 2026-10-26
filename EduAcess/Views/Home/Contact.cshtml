@@ -1,0 +1,503 @@
+﻿@{
+	ViewBag.Title = "Contact Us";
+}
+
+<style>
+	/* --- Global Match to Homepage --- */
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	body {
+		background-color: #faf9f6;
+		color: #1a2733;
+	}
+
+	/* --- Hero Section --- */
+	.contact-hero {
+		padding: 4rem 0 3rem 0;
+		background-color: #faf9f6;
+		text-align: center;
+	}
+
+	.badge-soft {
+		background-color: #e6f2f0;
+		color: #0d7a6e;
+		font-weight: 700;
+		font-size: 0.75rem;
+		letter-spacing: 1px;
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
+		text-transform: uppercase;
+		display: inline-block;
+		margin-bottom: 1.5rem;
+		border: 1px solid #cce5e2;
+	}
+
+	.contact-hero h1 {
+		font-size: 3rem;
+		font-weight: 900;
+		color: #1a2733;
+		line-height: 1.1;
+		letter-spacing: -1.5px;
+		margin-bottom: 1rem;
+	}
+
+	.contact-hero p {
+		font-size: 1.15rem;
+		color: #5a6571;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	/* --- Split Contact Card --- */
+	.contact-wrapper {
+		padding: 2rem 0 3rem 0;
+	}
+
+	.contact-card {
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 1rem;
+		box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+		overflow: hidden;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	/* Left: Contact Info Panel */
+	.contact-info-panel {
+		flex: 0 0 40%;
+		background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%);
+		padding: 3rem 2.5rem;
+		color: #ffffff;
+		position: relative;
+		overflow: hidden;
+	}
+
+		.contact-info-panel::before {
+			content: '';
+			position: absolute;
+			top: -50%;
+			right: -50%;
+			width: 200%;
+			height: 200%;
+			background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.08) 0%, transparent 50%);
+			pointer-events: none;
+		}
+
+		.contact-info-panel h2 {
+			font-size: 1.75rem;
+			font-weight: 800;
+			margin-bottom: 0.5rem;
+			position: relative;
+		}
+
+		.contact-info-panel p.lead {
+			opacity: 0.9;
+			font-size: 1rem;
+			margin-bottom: 2.5rem;
+			position: relative;
+		}
+
+	.contact-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-bottom: 1.75rem;
+		position: relative;
+	}
+
+	.contact-item-icon {
+		width: 44px;
+		height: 44px;
+		background: rgba(255,255,255,0.15);
+		border-radius: 0.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.contact-item h6 {
+		margin: 0 0 0.25rem 0;
+		font-weight: 700;
+		font-size: 0.95rem;
+	}
+
+	.contact-item p, .contact-item a {
+		margin: 0;
+		font-size: 0.9rem;
+		color: #e6f2f0;
+		text-decoration: none;
+		opacity: 0.9;
+	}
+
+		.contact-item a:hover {
+			color: #ffffff;
+			text-decoration: underline;
+		}
+
+	.contact-social {
+		margin-top: 2.5rem;
+		position: relative;
+		display: flex;
+		gap: 1rem;
+	}
+
+		.contact-social a {
+			width: 36px;
+			height: 36px;
+			background: rgba(255,255,255,0.15);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #ffffff;
+			transition: 0.2s;
+		}
+
+			.contact-social a:hover {
+				background: rgba(255,255,255,0.3);
+				transform: translateY(-2px);
+			}
+
+	/* Right: Contact Form */
+	.contact-form-panel {
+		flex: 1;
+		padding: 3rem 2.5rem;
+		min-width: 300px;
+	}
+
+		.contact-form-panel h2 {
+			font-size: 1.5rem;
+			font-weight: 800;
+			color: #1a2733;
+			margin-bottom: 0.5rem;
+		}
+
+		.contact-form-panel p.subtitle {
+			color: #5a6571;
+			font-size: 0.95rem;
+			margin-bottom: 2rem;
+		}
+
+	.form-group-custom {
+		margin-bottom: 1.25rem;
+	}
+
+		.form-group-custom label {
+			font-weight: 600;
+			color: #1a2733;
+			font-size: 0.9rem;
+			margin-bottom: 0.4rem;
+			display: block;
+		}
+
+	.form-control-custom {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		font-size: 1rem;
+		border: 1px solid #cfd6de;
+		border-radius: 0.375rem;
+		background-color: #fafbfc;
+		transition: 0.2s;
+		font-family: inherit;
+		resize: vertical;
+	}
+
+		.form-control-custom:focus {
+			background-color: #ffffff;
+			border-color: #0d7a6e;
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(13, 122, 110, 0.12);
+		}
+
+	.btn-edu-solid {
+		background-color: #0d7a6e;
+		color: #fff;
+		font-weight: 600;
+		border: 1px solid #0d7a6e;
+		padding: 0.85rem 2rem;
+		border-radius: 0.375rem;
+		transition: 0.2s;
+		width: 100%;
+	}
+
+		.btn-edu-solid:hover {
+			background-color: #095e54;
+			color: #fff;
+		}
+
+	.alert-success-custom {
+		background-color: #e6f2f0;
+		color: #0d7a6e;
+		border: 1px solid #cce5e2;
+		border-radius: 0.375rem;
+		padding: 1rem;
+		margin-bottom: 1.5rem;
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	/* --- MAP SECTION (NEW) --- */
+	.map-section {
+		padding: 2rem 0 5rem 0;
+	}
+
+	.map-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+		.map-header h3 {
+			font-size: 1.75rem;
+			font-weight: 800;
+			color: #1a2733;
+			margin-bottom: 0.5rem;
+		}
+
+		.map-header p {
+			color: #5a6571;
+			font-size: 1rem;
+		}
+
+	.map-container {
+		border-radius: 1rem;
+		overflow: hidden;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+		position: relative;
+		background: #ffffff;
+	}
+
+		.map-container iframe {
+			display: block;
+			width: 100%;
+			height: 450px;
+			border: 0;
+		}
+
+	.map-overlay-badge {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		background: #ffffff;
+		border: 1px solid #eae7e0;
+		border-radius: 0.5rem;
+		padding: 1rem 1.25rem;
+		box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+		.map-overlay-badge .icon {
+			width: 40px;
+			height: 40px;
+			background: #e6f2f0;
+			color: #0d7a6e;
+			border-radius: 0.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.map-overlay-badge .text h6 {
+			margin: 0;
+			font-weight: 700;
+			color: #1a2733;
+			font-size: 0.95rem;
+		}
+
+		.map-overlay-badge .text p {
+			margin: 0;
+			font-size: 0.8rem;
+			color: #5a6571;
+		}
+
+	/* --- Responsive --- */
+	@@media (max-width: 768px) {
+		.contact-hero h1 {
+			font-size: 2.25rem;
+		}
+
+		.contact-info-panel {
+			flex: 0 0 100%;
+			padding: 2.5rem 1.5rem;
+		}
+
+		.contact-form-panel {
+			flex: 0 0 100%;
+			padding: 2rem 1.5rem;
+		}
+
+		.map-container iframe {
+			height: 350px;
+		}
+
+		.map-overlay-badge {
+			position: relative;
+			top: 0;
+			left: 0;
+			margin: 1rem;
+		}
+	}
+</style>
+
+<!-- Hero Section -->
+<section class="contact-hero">
+	<div class="container">
+		<span class="badge-soft">Get in touch</span>
+		<h1>Let's talk about your future.</h1>
+		<p>Have a question? Need help with your application? We're here to help.</p>
+	</div>
+</section>
+
+<!-- Split Contact Card -->
+<div class="contact-wrapper">
+	<div class="container">
+		<div class="contact-card">
+
+			<!-- Left Panel: Contact Info -->
+			<div class="contact-info-panel">
+				<h2>Contact Information</h2>
+				<p class="lead">Reach out to us through any of these channels.</p>
+
+				<div class="contact-item">
+					<div class="contact-item-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
+						</svg>
+					</div>
+					<div>
+						<h6>Email us</h6>
+						<a href="mailto:hello@eduaccess.co.za">hello@eduaccess.co.za</a>
+					</div>
+				</div>
+
+				<div class="contact-item">
+					<div class="contact-item-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+						</svg>
+					</div>
+					<div>
+						<h6>Call us</h6>
+						<a href="tel:+27310000000">+27 31 000 0000</a>
+					</div>
+				</div>
+
+				<div class="contact-item">
+					<div class="contact-item-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+						</svg>
+					</div>
+					<div>
+						<h6>Visit us</h6>
+						<p>Durban, South Africa</p>
+					</div>
+				</div>
+
+				<div class="contact-social">
+					<a href="#" title="Twitter">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z" />
+						</svg>
+					</a>
+					<a href="#" title="LinkedIn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+						</svg>
+					</a>
+					<a href="#" title="Facebook">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+						</svg>
+					</a>
+				</div>
+			</div>
+
+			<!-- Right Panel: Contact Form -->
+			<div class="contact-form-panel">
+				<h2>Send us a message</h2>
+				<p class="subtitle">We'll get back to you within 24 hours.</p>
+
+				@if (ViewBag.StatusMessage != null)
+				{
+					<div class="alert-success-custom">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+							<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+						</svg>
+						@ViewBag.StatusMessage
+					</div>
+				}
+
+				@using (Html.BeginForm("Contact", "Home", FormMethod.Post, new { role = "form" }))
+				{
+					@Html.AntiForgeryToken()
+
+					<div class="form-group-custom">
+						<label for="name">Your Name</label>
+						<input type="text" id="name" name="name" class="form-control-custom" placeholder="Thandi Mokoena" required />
+					</div>
+
+					<div class="form-group-custom">
+						<label for="email">Email Address</label>
+						<input type="email" id="email" name="email" class="form-control-custom" placeholder="name@example.com" required />
+					</div>
+
+					<div class="form-group-custom">
+						<label for="subject">Subject</label>
+						<input type="text" id="subject" name="subject" class="form-control-custom" placeholder="How can we help?" required />
+					</div>
+
+					<div class="form-group-custom">
+						<label for="message">Message</label>
+						<textarea id="message" name="message" class="form-control-custom" rows="5" placeholder="Tell us what you need help with..." required></textarea>
+					</div>
+
+					<button type="submit" class="btn btn-edu-solid">Send Message &rarr;</button>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Map Section (NEW) -->
+<section class="map-section">
+	<div class="container">
+		<div class="map-header">
+			<h3>Find us in Durban</h3>
+			<p>Our team is based in the heart of KwaZulu-Natal.</p>
+		</div>
+
+		<div class="map-container">
+			<!-- Floating location badge -->
+			<div class="map-overlay-badge">
+				<div class="icon">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+						<path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+					</svg>
+				</div>
+				<div class="text">
+					<h6>Durban, South Africa</h6>
+					<p>KwaZulu-Natal · Open Mon-Fri 8am-5pm</p>
+				</div>
+			</div>
+
+			<!-- Google Map iframe - Durban -->
+			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110238.66309080231!2d30.88092755!3d-29.8586804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ef7aa0001bc1e39%3A0x6b8faeae7cf1d3f0!2sDurban!5e0!3m2!1sen!2sza!4v1700000000000!5m2!1sen!2sza"
+					allowfullscreen=""
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+					title="EduAccess Office Location - Durban">
+			</iframe>
+		</div>
+	</div>
+</section>

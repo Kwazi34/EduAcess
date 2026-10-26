@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Shared Study Passport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var subjects = (List<EduAcess.Models.LearnerSubject>)ViewBag.Subjects;
+}
+
+<div class="container mt-5 mb-5" style="max-width: 700px;">
+    <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%); padding: 2.5rem; color: white; text-align: center;">
+            <h4 class="mb-1" style="font-weight: 800;">@ViewBag.Name's Study Passport</h4>
+            <p class="mb-0" style="opacity: 0.9; font-size: 0.9rem;">Powered by EduAccess</p>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4 text-center">
+            <div class="mb-4">
+                <span class="text-muted small d-block mb-1">APS SCORE</span>
+                <h1 class="display-3 fw-bold" style="color: #0d7a6e;">@ViewBag.APS</h1>
+            </div>
+
+            <div class="mb-4">
+                <span class="text-muted small d-block mb-2">INTERESTS</span>
+                <span class="badge bg-light text-dark border fs-6">@ViewBag.Interests</span>
+            </div>
+
+            <hr />
+
+            <h5 class="text-start mb-3">Subjects & Marks</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Subject</th>
+                            <th class="text-end">Mark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var s in subjects) 
+                        {
+                            <tr>
+                                <td class="text-start">@s.SubjectName</td>
+                                <td class="text-end"><strong>@s.Mark%</strong></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <div class="alert alert-info small text-start mt-3">
+                <strong>Want your own?</strong> Create your free Study Passport on EduAccess and get matched with universities, bursaries, and Plan B options!
+            </div>
+
+            <a href="@Url.Action("Index", "Home")" class="btn btn-success w-100 mt-3">Create My Passport</a>
+        </div>
+    </div>
+</div>

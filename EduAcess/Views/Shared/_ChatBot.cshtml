@@ -1,0 +1,245 @@
+﻿@using Microsoft.AspNet.Identity
+
+<!-- Chat Widget Container -->
+<div id="chatbot-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+	<!-- Chat Window (Hidden by default) -->
+	<div id="chat-window" style="display: none; width: 380px; height: 580px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; flex-direction: column; overflow: hidden; margin-bottom: 15px;">
+
+		<!-- Header -->
+		<div style="background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%); padding: 1rem 1.25rem; color: white; display: flex; justify-content: space-between; align-items: center;">
+			<div style="display: flex; align-items: center; gap: 0.75rem;">
+				<div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+						<path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 7.5a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7z" />
+						<path d="M4.5 10.5a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7z" />
+					</svg>
+				</div>
+				<div>
+					<div style="font-weight: 700; font-size: 0.95rem;">EduAccess Assistant</div>
+					<div style="font-size: 0.75rem; opacity: 0.85; display: flex; align-items: center; gap: 0.3rem;">
+						<span style="width: 6px; height: 6px; background: #22c55e; border-radius: 50%;"></span>
+						Online — Ready to help
+					</div>
+				</div>
+			</div>
+			<button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; line-height: 1; opacity: 0.8;">&times;</button>
+		</div>
+
+		<!-- Message Area -->
+		<div id="chat-messages" style="flex: 1; padding: 1rem; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 0.75rem;">
+
+			<!-- Smart Welcome Message based on Login Status -->
+			@if (Request.IsAuthenticated)
+			{
+				<div style="align-self: flex-start; background: #ffffff; padding: 0.85rem 1rem; border-radius: 0 12px 12px 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.9rem; color: #1e293b; max-width: 85%; line-height: 1.5;">
+					Welcome back, <b>@User.Identity.GetUserName()</b>! 👋 <br /><br />
+					I'm connected to an AI brain now. Ask me <b>anything</b> about university, TVET, NSFAS, or what to do after matric!
+				</div>
+			}
+			else
+			{
+				<div style="align-self: flex-start; background: #ffffff; padding: 0.85rem 1rem; border-radius: 0 12px 12px 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.9rem; color: #1e293b; max-width: 85%; line-height: 1.5;">
+					Hi there! 👋 I'm the EduAccess Assistant. <br /><br />
+					I can help you explore <b>universities</b>, find <b>bursaries</b>, or understand your <b>APS</b>. Ask me anything!
+				</div>
+			}
+		</div>
+
+		<!-- Quick Replies (Simplified for AI) -->
+		<div id="quick-replies" style="padding: 0.6rem 1rem; background: #ffffff; border-top: 1px solid #f1f5f9; display: flex; gap: 0.5rem; overflow-x: auto; white-space: nowrap; scrollbar-width: none;">
+			<button onclick="quickReply('Why choose a university?')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Why Varsity?</button>
+			<button onclick="quickReply('Why choose a TVET college?')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Why TVET?</button>
+			<button onclick="quickReply('Tell me about UCT')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">UCT Info</button>
+			<button onclick="quickReply('Tell me about Wits')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Wits Info</button>
+			<button onclick="quickReply('Tell me about the Sasol bursary')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Sasol Bursary</button>
+			<button onclick="quickReply('What is NSFAS?')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">NSFAS</button>
+			<button onclick="quickReply('How is my APS calculated?')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">APS Score</button>
+			<button onclick="quickReply('What is Plan B?')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Plan B</button>
+			<button onclick="quickReply('I don\'t know what to study. Help me decide.')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500;">Help me decide</button>
+		</div>
+
+		<!-- Input Area -->
+		<div style="padding: 0.75rem 1rem; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 0.5rem; align-items: center;">
+			<input type="text" id="chat-input" placeholder="Type your question..."
+				   style="flex: 1; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.65rem 1rem; font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+				   onkeypress="handleChatEnter(event)"
+				   onfocus="this.style.borderColor='#0d7a6e'"
+				   onblur="this.style.borderColor='#cbd5e1'">
+			<button onclick="sendChatMessage()"
+					style="background: #0d7a6e; color: white; border: none; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: transform 0.2s;"
+					onmouseover="this.style.transform='scale(1.05)'"
+					onmouseout="this.style.transform='scale(1)'">
+				<svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+					<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<!-- Floating Action Button -->
+	<button onclick="toggleChat()"
+			style="width: 62px; height: 62px; background: linear-gradient(135deg, #0d7a6e 0%, #095e54 100%); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 20px rgba(13, 122, 110, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; float: right; transition: transform 0.2s;"
+			onmouseover="this.style.transform='scale(1.1)'"
+			onmouseout="this.style.transform='scale(1)'">
+		<svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+			<path d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1.5a.5.5 0 0 0 0 1H14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
+			<path d="M5 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm4 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm4 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+		</svg>
+	</button>
+</div>
+
+<!-- Styling for AI Markdown inside chat bubbles -->
+<style>
+	#chat-messages table {
+		border-collapse: collapse;
+		width: 100%;
+		font-size: 0.8rem;
+		margin-top: 8px;
+		margin-bottom: 8px;
+	}
+
+	#chat-messages th, #chat-messages td {
+		border: 1px solid #e2e8f0;
+		padding: 6px 8px;
+		text-align: left;
+	}
+
+	#chat-messages th {
+		background-color: #f8fafc;
+		font-weight: bold;
+	}
+
+	#chat-messages ul, #chat-messages ol {
+		padding-left: 1.2rem;
+		margin-bottom: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	#chat-messages li {
+		margin-bottom: 0.25rem;
+	}
+
+	#chat-messages p {
+		margin-bottom: 0.5rem;
+	}
+
+		#chat-messages p:last-child {
+			margin-bottom: 0;
+		}
+
+	#chat-messages strong {
+		color: #0d7a6e;
+	}
+</style>
+
+<!-- Load Marked.js to parse Markdown from the AI -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+	// Ensure script only loads once
+	if (!window.eduAccessChatBotLoaded) {
+		window.eduAccessChatBotLoaded = true;
+
+		// Toggle Chat Window
+		window.toggleChat = function () {
+			var chatWindow = document.getElementById('chat-window');
+			if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+				chatWindow.style.display = 'flex';
+				setTimeout(function () { document.getElementById('chat-input').focus(); }, 100);
+			} else {
+				chatWindow.style.display = 'none';
+			}
+		};
+
+		// Handle Enter Key
+		window.handleChatEnter = function (e) {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				sendChatMessage();
+			}
+		};
+
+		// Quick Reply Handler
+		window.quickReply = function (text) {
+			document.getElementById('chat-input').value = text;
+			sendChatMessage();
+		};
+
+		// Append Message to UI
+		window.appendMessage = function (text, isUser) {
+			var messages = document.getElementById('chat-messages');
+			var msgDiv = document.createElement('div');
+
+			if (isUser) {
+				msgDiv.style.cssText = "align-self: flex-end; background: #0d7a6e; color: white; padding: 0.85rem 1rem; border-radius: 12px 0 12px 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.5;";
+				msgDiv.innerHTML = text;
+			} else {
+				msgDiv.style.cssText = "align-self: flex-start; background: #ffffff; padding: 0.85rem 1rem; border-radius: 0 12px 12px 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.9rem; color: #1e293b; max-width: 85%; line-height: 1.5; width: 100%;";
+				// Show typing indicator initially
+				msgDiv.innerHTML = '<span class="typing-dots">●●●</span>';
+			}
+
+			messages.appendChild(msgDiv);
+			messages.scrollTop = messages.scrollHeight;
+			return msgDiv;
+		};
+
+		// Send Message to AI Backend
+		window.sendChatMessage = async function () {
+			var input = document.getElementById('chat-input');
+			var text = input.value.trim();
+			if (!text) return;
+
+			// 1. Show user message
+			appendMessage(text, true);
+			input.value = '';
+
+			// 2. Show typing indicator
+			var botMsgDiv = appendMessage('', false);
+
+			// 3. Call Backend
+			try {
+				const response = await fetch('/Home/ChatBotResponse', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ message: text })
+				});
+
+				if (!response.ok) throw new Error("Server error");
+
+				const data = await response.json();
+
+				// 4. Parse Markdown to HTML and display it
+				botMsgDiv.innerHTML = marked.parse(data.reply);
+				document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+
+			} catch (err) {
+				console.error(err);
+				botMsgDiv.innerHTML = "Oops! My connection dropped. Please try again.";
+				botMsgDiv.style.color = "#ef4444";
+			}
+		};
+
+		// Inject typing animation CSS
+		var style = document.createElement('style');
+		style.innerHTML = `
+			.typing-dots {
+				display: inline-block;
+				animation: blinkDots 1.2s infinite;
+				letter-spacing: 2px;
+				color: #0d7a6e;
+			}
+			@@keyframes blinkDots {
+				0% { opacity: .2; }
+				20% { opacity: 1; }
+				100% { opacity: .2; }
+			}
+			/* Hide scrollbar for quick replies */
+			#quick-replies::-webkit-scrollbar {
+				display: none;
+			}
+		`;
+		document.head.appendChild(style);
+	}
+</script>

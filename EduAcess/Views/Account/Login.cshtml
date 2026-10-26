@@ -1,0 +1,815 @@
+﻿@using EduAcess.Models
+@using Microsoft.Owin.Security
+@model LoginViewModel
+@{
+	ViewBag.Title = "Log in";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+}
+
+<style>
+	/* Reset top padding to allow full-height layout */
+	.body-content {
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	.auth-page-wrapper {
+		min-height: calc(100vh - 73px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #faf9f6;
+		padding: 2rem;
+	}
+
+	/* The main container acting as the split card */
+	.auth-split-container {
+		display: flex;
+		width: 100%;
+		max-width: 1100px;
+		background: #ffffff;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+		border: 1px solid #eae7e0;
+		overflow: hidden;
+		min-height: 650px;
+	}
+
+	/* Left Side: Brand Feature Box (Warm Green) */
+	.auth-left-brand {
+		flex: 0 0 45%;
+		padding: 4rem 3rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+		overflow: hidden;
+		background: radial-gradient(circle at 20% 20%, #f0f7f4, #e4f0ec 60%);
+	}
+
+		.auth-left-brand::before {
+			content: '';
+			position: absolute;
+			width: 280px;
+			height: 280px;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(13,122,110,0.08), transparent 70%);
+			top: -60px;
+			right: -60px;
+			animation: float 8s ease-in-out infinite;
+			pointer-events: none;
+		}
+
+	@@keyframes float {
+		0%, 100% {
+			transform: translate(0, 0);
+		}
+
+		50% {
+			transform: translate(-15px, 20px);
+		}
+	}
+
+	.auth-left-brand > * {
+		position: relative;
+		z-index: 1;
+	}
+
+	.auth-left-brand h2 {
+		font-size: 2.5rem;
+		font-weight: 800;
+		color: #1a2733;
+		line-height: 1.2;
+		margin-bottom: 1rem;
+		letter-spacing: -1px;
+	}
+
+	.auth-left-brand p {
+		color: #5a6571;
+		font-size: 1.05rem;
+		margin-bottom: 2.5rem;
+		max-width: 350px;
+	}
+
+	/* Live Workspace Preview */
+	.live-preview-window {
+		background: #ffffff;
+		border-radius: 0.5rem;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+		overflow: hidden;
+		margin-bottom: 1.5rem;
+		width: 100%;
+		max-width: 380px;
+	}
+
+	.preview-header {
+		background: #f8fafc;
+		border-bottom: 1px solid #eae7e0;
+		padding: 0.6rem 1rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.preview-dots {
+		display: flex;
+		gap: 5px;
+	}
+
+		.preview-dots .dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+		}
+
+	.dot.red {
+		background: #fc5753;
+	}
+
+	.dot.yellow {
+		background: #fdbc40;
+	}
+
+	.dot.green {
+		background: #33c748;
+	}
+
+	.preview-title {
+		font-size: 0.75rem;
+		color: #a0abb5;
+		font-weight: 500;
+	}
+
+	.preview-body {
+		padding: 1.25rem;
+		min-height: 120px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.chat-bubble {
+		background: #f4f6f8;
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		font-size: 0.85rem;
+		color: #1a2733;
+		width: fit-content;
+		margin-bottom: 0.75rem;
+		display: flex;
+		align-items: center;
+		min-height: 38px;
+	}
+
+	.typing-cursor {
+		display: inline-block;
+		width: 2px;
+		height: 1em;
+		background-color: #1a2733;
+		margin-left: 3px;
+		animation: blink 1s step-end infinite;
+	}
+
+	@@keyframes blink {
+		0%, 100% {
+			opacity: 1;
+		}
+
+		50% {
+			opacity: 0;
+		}
+	}
+
+	.result-badge {
+		background: #0d7a6e;
+		color: white;
+		padding: 0.5rem 0.75rem;
+		border-radius: 0.375rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		transition: opacity 0.4s ease, transform 0.4s ease;
+	}
+
+	/* Live pulse indicator */
+	.live-indicator {
+		margin-top: 0.5rem;
+		font-size: 0.8rem;
+		color: #5a6571;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.pulse-dot {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		background: #22c55e;
+		border-radius: 50%;
+		box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+		animation: pulse 2s infinite;
+	}
+
+	@@keyframes pulse {
+		0% {
+			box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+		}
+
+		70% {
+			box-shadow: 0 0 0 8px rgba(34,197,94,0);
+		}
+
+		100% {
+			box-shadow: 0 0 0 0 rgba(34,197,94,0);
+		}
+	}
+
+	/* Right Side: Login Form */
+	.auth-right-form {
+		flex: 0 0 55%;
+		padding: 4rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+		.auth-right-form h3 {
+			font-size: 2rem;
+			font-weight: 800;
+			color: #1a2733;
+			margin-bottom: 0.5rem;
+		}
+
+		.auth-right-form .subtitle {
+			color: #5a6571;
+			margin-bottom: 2rem;
+		}
+
+	/* Form Inputs matching screenshot */
+	.form-group-custom {
+		margin-bottom: 1.25rem;
+	}
+
+		.form-group-custom label {
+			font-weight: 500;
+			color: #1a2733;
+			font-size: 0.9rem;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
+
+	.form-control-custom {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		font-size: 1rem;
+		border: 1px solid #cfd6de;
+		border-radius: 0.375rem;
+		background-color: #fafbfc;
+		transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+	}
+
+		.form-control-custom:focus {
+			background-color: #ffffff;
+			border-color: #0d7a6e;
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(13, 122, 110, 0.1);
+		}
+
+		.form-control-custom.is-invalid {
+			border-color: #dc3545;
+		}
+
+		.form-control-custom.is-valid {
+			border-color: #0d7a6e;
+		}
+
+	/* Password wrapper to handle "Show" button */
+	.password-wrapper {
+		position: relative;
+	}
+
+	.show-password-btn {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		background: none;
+		border: none;
+		color: #0d7a6e;
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.pass-hint {
+		display: block;
+		margin-top: 0.35rem;
+		font-size: 0.78rem;
+		color: #a0abb5;
+		min-height: 1em;
+		transition: color 0.2s;
+	}
+
+	/* Checkboxes */
+	.custom-check {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.85rem;
+		color: #5a6571;
+		margin-bottom: 1rem;
+	}
+
+		.custom-check input {
+			accent-color: #0d7a6e;
+			width: 16px;
+			height: 16px;
+		}
+
+		.custom-check a {
+			color: #0d7a6e;
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+	/* Submit Button */
+	.btn-submit-signin {
+		background-color: #0d7a6e;
+		color: white;
+		font-weight: 700;
+		padding: 0.85rem;
+		border-radius: 0.375rem;
+		border: none;
+		width: 100%;
+		transition: background 0.2s, transform 0.1s;
+		margin-top: 0.5rem;
+		margin-bottom: 1.5rem;
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+	}
+
+		.btn-submit-signin:hover {
+			background-color: #095e54;
+			color: white;
+		}
+
+		.btn-submit-signin:active {
+			transform: scale(0.98);
+		}
+
+		.btn-submit-signin.loading {
+			cursor: wait;
+			opacity: 0.85;
+		}
+
+	.btn-spinner {
+		display: none;
+		align-items: center;
+	}
+
+	.btn-submit-signin.loading .btn-spinner {
+		display: inline-flex;
+	}
+
+	/* Custom Google Button & Face ID Button */
+	.btn-google-custom, .btn-face-custom {
+		background-color: #ffffff;
+		color: #1a2733;
+		font-weight: 600;
+		padding: 0.75rem;
+		border-radius: 0.375rem;
+		border: 1px solid #cfd6de;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		transition: 0.2s;
+		text-decoration: none;
+		font-size: 1rem;
+		margin-bottom: 0.5rem;
+	}
+
+		.btn-google-custom:hover, .btn-face-custom:hover {
+			background-color: #faf9f6;
+			color: #1a2733;
+			border-color: #b0b8c1;
+		}
+
+	/* Divider */
+	.divider {
+		display: flex;
+		align-items: center;
+		text-align: center;
+		color: #a0abb5;
+		font-size: 0.8rem;
+		margin: 1.5rem 0;
+	}
+
+		.divider::before, .divider::after {
+			content: '';
+			flex: 1;
+			border-bottom: 1px solid #eae7e0;
+		}
+
+		.divider:not(:empty)::before {
+			margin-right: .5em;
+		}
+
+		.divider:not(:empty)::after {
+			margin-left: .5em;
+		}
+
+	/* Responsive */
+	@@media (max-width: 991px) {
+		.auth-split-container {
+			flex-direction: column;
+			min-height: auto;
+		}
+
+		.auth-left-brand {
+			display: none;
+		}
+
+		.auth-right-form {
+			padding: 2rem;
+		}
+	}
+</style>
+
+<div class="auth-page-wrapper">
+	<div class="auth-split-container">
+
+		<!-- Left Side: Brand & Live Demo Preview -->
+		<div class="auth-left-brand">
+			<small class="fw-bold text-uppercase mb-3" style="color: #0d7a6e; letter-spacing: 2px; font-size: 0.75rem;">Your future, connected</small>
+			<h2>One workspace.<br />Every opportunity.</h2>
+			<p>Manage your study options, secure funding, and track your applications in one place.</p>
+
+			<!-- Live Workspace Preview -->
+			<div class="live-preview-window">
+				<div class="preview-header">
+					<div class="preview-dots">
+						<span class="dot red"></span>
+						<span class="dot yellow"></span>
+						<span class="dot green"></span>
+					</div>
+					<div class="preview-title">EduAccess Workspace</div>
+				</div>
+				<div class="preview-body">
+					<div class="chat-bubble">
+						<span class="typing-text" id="liveChatText"></span><span class="typing-cursor">|</span>
+					</div>
+					<div class="result-badge" id="liveResultBadge" style="opacity: 0; transform: translateY(5px);">
+						<svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+							<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+						</svg>
+						Likely Eligible for NSFAS!
+					</div>
+				</div>
+			</div>
+
+			<div class="live-indicator">
+				<span class="pulse-dot"></span>
+				<span><span id="activeCount">1,204</span> students online right now</span>
+			</div>
+		</div>
+
+		<!-- Right Side: Login Form -->
+		<div class="auth-right-form">
+			<h3>Welcome back</h3>
+			<p class="subtitle">Sign in to your EduAccess account.</p>
+
+			<section id="loginForm">
+				@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form", id = "loginFormEl" }))
+				{
+					@Html.AntiForgeryToken()
+					@Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+					<!-- Email -->
+					<div class="form-group-custom">
+						@Html.LabelFor(m => m.Email)
+						@Html.TextBoxFor(m => m.Email, new { @class = "form-control-custom", placeholder = "name@example.com", type = "email", id = "emailInput" })
+						@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small d-block mt-1" })
+					</div>
+
+					<!-- Password -->
+					<div class="form-group-custom">
+						@Html.LabelFor(m => m.Password)
+						<div class="password-wrapper">
+							@Html.PasswordFor(m => m.Password, new { @class = "form-control-custom", placeholder = "••••••••", id = "passwordInput" })
+							<button type="button" class="show-password-btn" onclick="togglePassword(this)">Show</button>
+						</div>
+						@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small d-block mt-1" })
+						<small class="pass-hint" id="passHint"></small>
+					</div>
+
+					<!-- Remember Me & Forgot Password -->
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<label class="custom-check mb-0">
+							@Html.CheckBoxFor(m => m.RememberMe)
+							Remember me
+						</label>
+						<a href="@Url.Action("ForgotPassword", "Account")" style="color: #0d7a6e; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Forgot Password?</a>
+					</div>
+
+					<!-- Submit Button -->
+					<button type="submit" class="btn-submit-signin shadow-sm" id="signInBtn">
+						<span class="btn-text">Sign in</span>
+						<span class="btn-spinner">
+							<svg width="16" height="16" viewBox="0 0 24 24">
+								<circle cx="12" cy="12" r="10" stroke="white" stroke-width="3"
+										fill="none" stroke-dasharray="50" stroke-dashoffset="20">
+									<animateTransform attributeName="transform" type="rotate"
+													  from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
+								</circle>
+							</svg>
+						</span>
+					</button>
+				}
+			</section>
+
+			<!-- OR Divider -->
+			<div class="divider">or</div>
+
+			<!-- FACE ID BUTTON -->
+			<button type="button" id="faceLoginBtn" class="btn-face-custom">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-bounding-box" viewBox="0 0 16 16">
+					<path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z" />
+					<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+				</svg>
+				Login with Face ID
+			</button>
+
+			<!-- Social Logins -->
+			@if (loginProviders.Count() > 0)
+			{
+				using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+				{
+					@Html.AntiForgeryToken()
+					<div id="socialLoginList">
+						@foreach (AuthenticationDescription p in loginProviders)
+						{
+							<button type="submit" class="btn-google-custom" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">
+								<!-- Google G Logo SVG -->
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+									<path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+									<path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+									<path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+									<path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+								</svg>
+								Continue with @p.AuthenticationType
+							</button>
+						}
+					</div>
+				}
+			}
+
+			<div class="text-center mt-4">
+				<a href="@Url.Action("Register", "Account")" style="color: #0d7a6e; font-weight: 600; text-decoration: none;">Create an account</a>
+			</div>
+
+			<div class="text-center text-muted" style="font-size: 0.75rem; margin-top: 1rem;">
+				By logging in, you agree to EduAccess's <a href="#" class="text-muted">Terms &amp; Conditions</a> and acknowledge the security policy.
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- Face ID Modal -->
+<div class="modal fade" id="faceModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content text-center p-4">
+			<h5 class="mb-3">Face Login</h5>
+			<div style="position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 4px solid #0d7a6e;">
+				<video id="loginVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+			</div>
+			<h6 id="faceLoginStatus" class="mt-3 text-muted">Preparing camera...</h6>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@Scripts.Render("~/bundles/jqueryval")
+
+	<!-- Load Face API -->
+	<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+	<script>
+		/* ---------- Show / Hide password ---------- */
+		function togglePassword(btn) {
+			var input = document.getElementById("passwordInput");
+			var showing = input.type === "text";
+			input.type = showing ? "password" : "text";
+			btn.textContent = showing ? "Show" : "Hide";
+		}
+
+		(function () {
+			/* ---------- Live email validation on blur ---------- */
+			var emailInput = document.getElementById("emailInput");
+			if (emailInput) {
+				emailInput.addEventListener("blur", function () {
+					var v = this.value.trim();
+					if (!v) { this.classList.remove("is-valid", "is-invalid"); return; }
+					var ok = /^[^\s]+[^\s]+\.[^\s]+$/.test(v);
+					this.classList.toggle("is-valid", ok);
+					this.classList.toggle("is-invalid", !ok);
+				});
+			}
+
+			/* ---------- Live password strength hint ---------- */
+			var passInput = document.getElementById("passwordInput");
+			var passHint = document.getElementById("passHint");
+			if (passInput && passHint) {
+				passInput.addEventListener("input", function () {
+					var len = this.value.length;
+					if (len === 0) {
+						passHint.textContent = "";
+					} else if (len < 8) {
+						var need = 8 - len;
+						passHint.textContent = need + " more character" + (need > 1 ? "s" : "") + " needed";
+						passHint.style.color = "#a0abb5";
+					} else {
+						passHint.textContent = "✓ Looks good";
+						passHint.style.color = "#0d7a6e";
+					}
+				});
+			}
+
+			/* ---------- Submit button loading state ---------- */
+			var form = document.getElementById("loginFormEl");
+			var signInBtn = document.getElementById("signInBtn");
+			if (form && signInBtn) {
+				form.addEventListener("submit", function () {
+					signInBtn.classList.add("loading");
+					var text = signInBtn.querySelector(".btn-text");
+					if (text) { text.textContent = "Signing in…"; }
+				});
+			}
+
+			/* ---------- Error shake on load ---------- */
+			window.addEventListener("load", function () {
+				if (document.querySelector(".field-validation-error, .validation-summary-errors")) {
+					var card = document.querySelector(".auth-split-container");
+					if (card && card.animate) {
+						card.animate([
+							{ transform: "translateX(0)" },
+							{ transform: "translateX(-6px)" },
+							{ transform: "translateX(6px)" },
+							{ transform: "translateX(0)" }
+						], { duration: 300, easing: "ease-in-out" });
+					}
+				}
+			});
+
+			/* ---------- Live "students online" counter ---------- */
+			var counterEl = document.getElementById("activeCount");
+			if (counterEl) {
+				var base = 1204;
+				setInterval(function () {
+					var n = base + Math.floor(Math.random() * 31) - 15;
+					counterEl.textContent = n.toLocaleString();
+				}, 5000);
+			}
+
+			/* ---------- Live Home-Page Style Demo ---------- */
+			var chatText = document.getElementById("liveChatText");
+			var resultBadge = document.getElementById("liveResultBadge");
+
+			if (chatText && resultBadge) {
+				var messages = [
+					"Checking NSFAS readiness...",
+					"Matching your marks to courses...",
+					"Finding bursaries near you...",
+					"Reviewing your Plan B options..."
+				];
+				var currentMsg = 0;
+				var charIndex = 0;
+				var isDeleting = false;
+
+				function typeEffect() {
+					var fullText = messages[currentMsg];
+
+					if (isDeleting) {
+						chatText.textContent = fullText.substring(0, charIndex - 1);
+						charIndex--;
+					} else {
+						chatText.textContent = fullText.substring(0, charIndex + 1);
+						charIndex++;
+					}
+
+					var typingSpeed = isDeleting ? 30 : 50;
+
+					if (!isDeleting && charIndex === fullText.length) {
+						typingSpeed = 1500;
+						if (fullText === "Checking NSFAS readiness...") {
+							setTimeout(function () {
+								resultBadge.style.opacity = "1";
+								resultBadge.style.transform = "translateY(0)";
+							}, 500);
+						}
+						isDeleting = true;
+					} else if (isDeleting && charIndex === 0) {
+						isDeleting = false;
+						currentMsg = (currentMsg + 1) % messages.length;
+						typingSpeed = 500;
+						resultBadge.style.opacity = "0";
+						resultBadge.style.transform = "translateY(5px)";
+					}
+
+					setTimeout(typeEffect, typingSpeed);
+				}
+
+				typeEffect();
+			}
+		})();
+
+		/* ---------- FACE ID LOGIN LOGIC ---------- */
+		const faceLoginBtn = document.getElementById('faceLoginBtn');
+		const loginVideo = document.getElementById('loginVideo');
+		const statusText = document.getElementById('faceLoginStatus');
+		const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+
+		let faceModal;
+		let streamRef;
+
+		// Preload the AI models so the camera opens instantly
+		if (typeof faceapi !== 'undefined') {
+			Promise.all([
+				faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+				faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+				faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+			]).catch(err => console.error("Face API Load Error:", err));
+		}
+
+		faceLoginBtn.addEventListener('click', async () => {
+			// Requires bootstrap
+			faceModal = new bootstrap.Modal(document.getElementById('faceModal'));
+			faceModal.show();
+
+			try {
+				streamRef = await navigator.mediaDevices.getUserMedia({ video: true });
+				loginVideo.srcObject = streamRef;
+				statusText.innerText = "Look at the camera...";
+
+				// Start scanning loop
+				setTimeout(() => startFaceMatch(), 1500);
+			} catch (err) {
+				alert("Camera access denied. Please enable camera permissions.");
+				faceModal.hide();
+			}
+		});
+
+		async function startFaceMatch() {
+			if (!loginVideo.srcObject) return;
+
+			const detection = await faceapi.detectSingleFace(loginVideo, new faceapi.TinyFaceDetectorOptions())
+				.withFaceLandmarks()
+				.withFaceDescriptor();
+
+			if (detection) {
+				statusText.innerText = "Face detected. Verifying...";
+				const currentDescriptor = Array.from(detection.descriptor);
+
+				// Send to backend
+				fetch('/Account/FaceLogin', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ currentDescriptor: currentDescriptor })
+				})
+					.then(res => res.json())
+					.then(data => {
+						if (data.success) {
+							statusText.innerText = "✅ Success! Logging you in...";
+							statusText.classList.replace('text-muted', 'text-success');
+
+							// Stop camera
+							streamRef.getTracks().forEach(track => track.stop());
+
+							// Redirect
+							setTimeout(() => window.location.href = data.redirectUrl, 1000);
+						} else {
+							statusText.innerText = "❌ Face not recognized. Try again.";
+							statusText.classList.replace('text-muted', 'text-danger');
+							setTimeout(() => {
+								statusText.innerText = "Look at the camera...";
+								statusText.classList.replace('text-danger', 'text-muted');
+								startFaceMatch(); // Loop
+							}, 2000);
+						}
+					});
+			} else {
+				setTimeout(() => startFaceMatch(), 500);
+			}
+		}
+	</script>
+}

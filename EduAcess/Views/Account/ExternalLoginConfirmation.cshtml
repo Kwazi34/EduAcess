@@ -1,0 +1,200 @@
+﻿@model EduAcess.Models.ExternalLoginConfirmationViewModel
+@{
+	ViewBag.Title = "Complete Registration";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+	.body-content {
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	.auth-page-wrapper {
+		min-height: calc(100vh - 73px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #faf9f6;
+		padding: 2rem;
+	}
+
+	.auth-card {
+		display: flex;
+		width: 100%;
+		max-width: 900px;
+		background: #ffffff;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+		border: 1px solid #eae7e0;
+		overflow: hidden;
+		min-height: 500px;
+	}
+
+	.auth-left {
+		flex: 0 0 40%;
+		padding: 4rem 3rem;
+		background: radial-gradient(circle at 20% 20%, #f0f7f4, #e4f0ec 60%);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+	}
+
+		.auth-left h2 {
+			font-size: 2.25rem;
+			font-weight: 800;
+			color: #1a2733;
+			line-height: 1.2;
+			margin-bottom: 1rem;
+			letter-spacing: -1px;
+		}
+
+		.auth-left p {
+			color: #5a6571;
+			font-size: 1rem;
+			line-height: 1.5;
+		}
+
+	.auth-right {
+		flex: 0 0 60%;
+		padding: 4rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.provider-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: #f8fafc;
+		border: 1px solid #cbd5e1;
+		padding: 0.4rem 0.8rem;
+		border-radius: 999px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: #475569;
+		margin-bottom: 1.5rem;
+	}
+
+	.auth-right h3 {
+		font-size: 1.75rem;
+		font-weight: 800;
+		color: #1a2733;
+		margin-bottom: 0.5rem;
+	}
+
+	.auth-right .subtitle {
+		color: #5a6571;
+		margin-bottom: 2rem;
+		font-size: 0.95rem;
+	}
+
+	.form-group-custom {
+		margin-bottom: 1.25rem;
+	}
+
+		.form-group-custom label {
+			font-weight: 600;
+			color: #1a2733;
+			font-size: 0.9rem;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
+
+	.form-control-custom {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		font-size: 1rem;
+		border: 1px solid #cfd6de;
+		border-radius: 0.375rem;
+		background-color: #fafbfc;
+		transition: all 0.2s;
+	}
+
+		.form-control-custom:focus {
+			background-color: #ffffff;
+			border-color: #0d7a6e;
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(13, 122, 110, 0.1);
+		}
+
+	.btn-submit {
+		background-color: #0d7a6e;
+		color: white;
+		font-weight: 700;
+		padding: 0.85rem;
+		border-radius: 0.375rem;
+		border: none;
+		width: 100%;
+		transition: 0.2s;
+		margin-top: 1rem;
+	}
+
+		.btn-submit:hover {
+			background-color: #095e54;
+		}
+
+	@@media (max-width: 768px) {
+		.auth-card {
+			flex-direction: column;
+		}
+
+		.auth-left {
+			display: none;
+		}
+
+		.auth-right {
+			padding: 2rem;
+		}
+	}
+</style>
+
+<div class="auth-page-wrapper">
+	<div class="auth-card">
+
+		<!-- Left Branding Side -->
+		<div class="auth-left">
+			<h2>One step<br />closer.</h2>
+			<p>We just need to confirm your email address to link it to your EduAccess account securely.</p>
+		</div>
+
+		<!-- Right Form Side -->
+		<div class="auth-right">
+			<div class="provider-badge">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+				</svg>
+				Verified via @ViewBag.LoginProvider
+			</div>
+
+			<h3>Complete your profile</h3>
+			<p class="subtitle">Confirm your email address below to finish signing up.</p>
+
+			@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+			{
+				@Html.AntiForgeryToken()
+				@Html.ValidationSummary(true, "", new { @class = "text-danger small mb-3" })
+
+				<div class="form-group-custom">
+					@Html.LabelFor(m => m.Email, "Email Address")
+					@Html.TextBoxFor(m => m.Email, new { @class = "form-control-custom", placeholder = "name@example.com" })
+					@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small d-block mt-1" })
+				</div>
+
+				<button type="submit" class="btn-submit">Finish Registration</button>
+			}
+
+			<div class="text-center mt-4">
+				<small class="text-muted">
+					Wrong account? <a href="@Url.Action("Login", "Account")" style="color:#0d7a6e; font-weight: 600;">Go back</a>
+				</small>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@Scripts.Render("~/bundles/jqueryval")
+}

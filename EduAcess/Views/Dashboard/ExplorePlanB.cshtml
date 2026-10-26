@@ -1,0 +1,77 @@
+﻿@using EduAcess.Models
+@model DashboardViewModel
+@{
+	ViewBag.Title = "Explore Plan B";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+	.match-card {
+		transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		cursor: pointer;
+	}
+
+		.match-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+		}
+
+	.planb-card {
+		border-left: 4px solid #3b82f6 !important;
+	}
+	/* Blue instead of yellow */
+</style>
+
+<div class="container mt-5 mb-5">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<div>
+			<h2>Explore Plan B</h2>
+			<p class="text-muted mb-0">Hi @Model.UserName, you qualify for these programmes with your APS of <strong>@Model.APS</strong>, but they weren't in your selected interests.</p>
+		</div>
+		<a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary">
+			&larr; Back to Dashboard
+		</a>
+	</div>
+
+	@if (!Model.PlanBMatches.Any())
+	{
+		<div class="alert alert-info shadow-sm border-0">
+			<strong>No other options found.</strong> You either qualify for everything in your selected interests, or there are no other programmes matching your APS.
+		</div>
+	}
+	else
+	{
+		<div class="row">
+			@foreach (var match in Model.PlanBMatches)
+			{
+				<div class="col-md-6 mb-4">
+					<a href="@Url.Action("ProgrammeDetails", "Dashboard", new { id = match.Id })" class="text-decoration-none text-dark d-block h-100">
+						<div class="card h-100 shadow-sm border-0 match-card planb-card">
+							<div class="card-body p-4">
+								<div class="d-flex justify-content-between align-items-start mb-3">
+									<div>
+										<h4 class="card-title mb-1 fw-bold text-dark">@match.Name</h4>
+										<h6 class="text-muted mb-2">@match.Institution</h6>
+										<p class="small text-muted mb-0">@match.QualificationType &middot; @match.Years Years</p>
+									</div>
+									<span class="badge bg-success fs-6">Qualified</span>
+								</div>
+
+								<hr class="my-3 text-muted" style="opacity: 0.1;" />
+
+								<div class="d-flex justify-content-between align-items-end">
+									<div>
+										<span class="badge bg-light text-dark border">Field: @match.FieldOfStudy</span>
+									</div>
+									<div class="text-primary small fw-bold">
+										View Details &rarr;
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+			}
+		</div>
+	}
+</div>

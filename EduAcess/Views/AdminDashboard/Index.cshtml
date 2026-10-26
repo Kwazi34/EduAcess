@@ -1,0 +1,309 @@
+﻿@model EduAcess.Models.AdminDashboardViewModel
+@using Microsoft.AspNet.Identity
+@{
+	ViewBag.Title = "Dashboard Overview";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+	/* --- Dashboard Stat Cards --- */
+	.stat-card {
+		background: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		padding: 1.5rem;
+		height: 100%;
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+
+		.stat-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+		}
+
+	.stat-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 0.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 1rem;
+	}
+
+	.stat-value {
+		font-size: 1.75rem;
+		font-weight: 800;
+		color: #1a2733;
+		line-height: 1;
+		margin-bottom: 0.5rem;
+	}
+
+	.stat-label {
+		font-size: 0.85rem;
+		color: #5a6571;
+		font-weight: 500;
+	}
+
+	/* --- Chart Containers --- */
+	.chart-container {
+		position: relative;
+		height: 250px;
+		width: 100%;
+	}
+
+	/* --- Activity Feed --- */
+	.activity-item {
+		border-bottom: 1px solid #f0f2f5;
+		padding: 0.75rem 0;
+	}
+
+		.activity-item:last-child {
+			border-bottom: none;
+		}
+
+	/* --- Data Table --- */
+	.admin-table-card {
+		background: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		overflow: hidden;
+	}
+
+	.admin-table-header {
+		padding: 1.25rem 1.5rem;
+		border-bottom: 1px solid #e6e9ee;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.table-custom {
+		margin-bottom: 0;
+	}
+
+		.table-custom th {
+			background-color: #ffffff;
+			color: #5a6571;
+			font-weight: 600;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-top: none;
+			border-bottom: 1px solid #e6e9ee;
+			padding: 1rem 1.5rem;
+		}
+
+		.table-custom td {
+			padding: 1rem 1.5rem;
+			vertical-align: middle;
+			border-bottom: 1px solid #f0f2f5;
+			font-size: 0.9rem;
+		}
+
+	.badge-role {
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+	}
+
+		.badge-role.admin {
+			background-color: #e6f2f0;
+			color: #0d7a6e;
+		}
+
+		.badge-role.learner {
+			background-color: #eef5fc;
+			color: #1f78d1;
+		}
+</style>
+
+<!-- Page Header with CSV Export -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<div>
+		<h2 class="fw-bold mb-1" style="color: #1a2733;">Dashboard Overview</h2>
+		<p class="text-muted mb-0">Welcome back. Here is what's happening with EduAccess today.</p>
+	</div>
+	<a href="@Url.Action("ExportUsersToCsv", "AdminDashboard")" class="btn btn-outline-success">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+			<path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+			<path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+		</svg>
+		Export User Data (CSV)
+	</a>
+</div>
+
+<!-- Row 1: Core Stat Cards -->
+<div class="row g-3 mb-4">
+	<div class="col-md-3">
+		<div class="stat-card">
+			<div class="stat-icon" style="background-color: #eef5fc; color: #1f78d1;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /></svg>
+			</div>
+			<div class="stat-value">@Model.TotalUsers</div>
+			<div class="stat-label">Total Users</div>
+			<div class="mt-2 small fw-bold text-success">● @Model.ActiveUsers Active</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="stat-card">
+			<div class="stat-icon" style="background-color: #f0f7f4; color: #0d7a6e;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16"><path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 0 .906l7.5 3.5a.5.5 0 0 0 .422 0l7.5-3.5a.5.5 0 0 0 0-.906l-7.5-3.5Z" /><path d="M8 9.5a.5.5 0 0 0 .5-.5V6.76l5.89 2.748A.5.5 0 0 0 15 9a.5.5 0 0 0-.39-.488l-6.61-3.085a.5.5 0 0 0-.422 0L1.39 8.512A.5.5 0 0 0 1 9a.5.5 0 0 0 .5.5h5.89V9h.61v.5Z" /></svg>
+			</div>
+			<div class="stat-value">@Model.TotalInstitutions</div>
+			<div class="stat-label">Institutions Listed</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="stat-card">
+			<div class="stat-icon" style="background-color: #fff8eb; color: #f5a623;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z" /><path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.093-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.377.917 1.04 1.063l.327.073v1.266c-.39-.044-.675-.244-.744-.566h-.653zm1.183-1.196c0-.324.223-.503.506-.557l.198-.025v1.11l-.198-.025c-.283-.04-.506-.221-.506-.503zM8.61 8.07h.615c.436 0 .79-.147.79-.553 0-.42-.333-.562-.756-.562h-.65v1.115zM8.196 5.5v5.06h.97c.529 0 .886-.226.886-.717 0-.49-.342-.71-.857-.71h-.584V5.5h-.415z" /></svg>
+			</div>
+			<div class="stat-value">@Model.TotalBursaries</div>
+			<div class="stat-label">Bursaries Available</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="stat-card" style="background: #fff8eb; border-color: #fde68a;">
+			<div class="stat-icon" style="background-color: #fef3c7; color: #b45309;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z" /></svg>
+			</div>
+			<div class="stat-value" style="color: #b45309;">@Model.TotalPlanBMatches</div>
+			<div class="stat-label" style="color: #b45309;">Plan B Candidates</div>
+			<div class="mt-2 small text-muted">Learners needing backup options</div>
+		</div>
+	</div>
+</div>
+
+<!-- Row 2: Analytics Charts -->
+<div class="row g-3 mb-4">
+	<div class="col-lg-4">
+		<div class="stat-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">APS Distribution</h6>
+			<div class="chart-container">
+				<canvas id="apsChart"></canvas>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="stat-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">Top Interests</h6>
+			<div class="chart-container">
+				<canvas id="interestChart"></canvas>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="stat-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">Geographic Distribution</h6>
+			<div class="chart-container">
+				<canvas id="provinceChart"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Row 3: Live Feed & Quick Actions -->
+<div class="row g-3 mb-4">
+	<div class="col-md-8">
+		<div class="stat-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">Live Activity Feed</h6>
+			@if (Model.RecentActivities != null && Model.RecentActivities.Any())
+			{
+				foreach (var activity in Model.RecentActivities)
+				{
+					<div class="activity-item d-flex justify-content-between align-items-center">
+						<div>
+							<strong>@activity.UserName</strong> <span class="text-muted">@activity.Action</span>
+						</div>
+						<small class="text-muted">Just now</small>
+					</div>
+				}
+			}
+			else
+			{
+				<p class="text-muted mb-0">No recent activity.</p>
+			}
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="stat-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">Quick Actions</h6>
+			<div class="d-grid gap-2">
+				<a href="@Url.Action("Users", "AdminDashboard")" class="btn btn-outline-dark text-start" style="font-size: 0.9rem;">👥 View All Users</a>
+				<a href="@Url.Action("Bursaries", "AdminDashboard")" class="btn btn-outline-dark text-start" style="font-size: 0.9rem;">💰 Manage Bursaries</a>
+				<a href="@Url.Action("Institutions", "AdminDashboard")" class="btn btn-outline-dark text-start" style="font-size: 0.9rem;">🏫 Manage Institutions</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // --- 1. APS Distribution Chart (Bar) ---
+            new Chart(document.getElementById('apsChart'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ApsLabels ?? new List<string>())),
+                    datasets: [{
+                        label: 'Learners',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ApsData ?? new List<int>())),
+                        backgroundColor: '#0d7a6e',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // --- 2. Top Interests Chart (Doughnut) ---
+            new Chart(document.getElementById('interestChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.InterestLabels ?? new List<string>())),
+                    datasets: [{
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.InterestData ?? new List<int>())),
+                        backgroundColor: ['#0d7a6e', '#1f78d1', '#e05545', '#f5a623', '#6f42c1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // --- 3. Geographic Distribution Chart (Horizontal Bar) ---
+            new Chart(document.getElementById('provinceChart'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProvinceLabels ?? new List<string>())),
+                    datasets: [{
+                        label: 'Learners',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProvinceData ?? new List<int>())),
+                        backgroundColor: '#1f78d1',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+	</script>
+}

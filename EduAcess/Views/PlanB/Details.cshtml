@@ -1,0 +1,293 @@
+﻿@{
+	ViewBag.Title = "Plan B Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	string route = (string)ViewBag.Route;
+
+	string title = "";
+	string subtitle = "";
+	string time = "";
+	string cost = "";
+	string whatItIs = "";
+	string[] steps = new string[0];
+	string outcome = "";
+	string cta = "";
+
+	switch (route)
+	{
+		case "extended":
+			title = "Extended Programme";
+			subtitle = "Same degree, one extra year";
+			time = "4 years (vs 3 years)";
+			cost = "Standard university fees + 1 extra year of fees";
+			whatItIs = "Some universities offer extended curriculum degrees. You take the same modules as the standard degree, but spread over 4 years with extra academic support in the first year.";
+			steps = new[] {
+				"Apply to the extended version of your chosen degree (usually listed as 'Extended BCom', 'Extended BSc', etc.)",
+				"Complete Year 1 with intensive academic support",
+				"Years 2-4 follow the standard degree curriculum",
+				"Graduate with the same degree qualification as mainstream students"
+			};
+			outcome = "You graduate with the same degree — just one year later, with stronger academic foundations.";
+			cta = "Look for 'Extended' programmes on the Programmes page";
+			break;
+
+		case "tvet":
+			title = "TVET, then Articulate";
+			subtitle = "N4-N6 → Diploma → Degree";
+			time = "2-3 years (TVET), then +2 years (Diploma), then +1-2 years (Degree)";
+			cost = "TVET fees are much lower (R15,000 - R30,000/year)";
+			whatItIs = "Start at a TVET college with an N4-N6 qualification, then use articulation agreements to enter a university diploma or degree.";
+			steps = new[] {
+				"Apply for an N4-N6 programme at a public TVET college",
+				"Complete the 2-year N4-N6 qualification",
+				"Apply to a university diploma using your TVET qualification",
+				"After the diploma, apply for advanced standing into a degree"
+			};
+			outcome = "You can ultimately earn a degree — but the route takes longer and requires strong performance at each stage.";
+			cta = "Browse TVET programmes on the Programmes page";
+			break;
+
+		case "certificate":
+			title = "Higher Certificate";
+			subtitle = "1-year entry qualification";
+			time = "1 year";
+			cost = "R20,000 - R50,000 depending on institution";
+			whatItIs = "A Higher Certificate is a 1-year qualification (NQF Level 5) offered by both public and private institutions. It's designed to prepare you for degree study or an entry-level career.";
+			steps = new[] {
+				"Apply for a Higher Certificate in a related field (e.g., Business, IT)",
+				"Complete the 1-year qualification with a passing average",
+				"Apply for a Bachelor's degree at the same institution",
+				"Use your Higher Certificate to demonstrate academic readiness"
+			};
+			outcome = "You have a recognised NQF Level 5 qualification and a direct pathway into degree study.";
+			cta = "Browse Higher Certificate programmes";
+			break;
+
+		case "upgrade":
+			title = "Improve Your Marks";
+			subtitle = "Rewrite matric and reapply";
+			time = "1 year";
+			cost = "R2,000 - R5,000 per subject (matric rewrite)";
+			whatItIs = "If you missed the APS by a few points, you can rewrite specific matric subjects to boost your APS, then reapply next year.";
+			steps = new[] {
+				"Identify which subject(s) need improvement to reach the required APS",
+				"Register for a matric rewrite (via the Department of Basic Education)",
+				"Study and rewrite the subject(s)",
+				"Reapply to your target programme next cycle with the new marks"
+			};
+			outcome = "You can achieve the exact APS you need — but you lose one year in the process.";
+			cta = "Learn more about matric rewrites at education.gov.za";
+			break;
+
+		default:
+			return;
+	}
+}
+
+<style>
+	body {
+		background-color: #f8f9fa;
+		font-family: 'Inter', -apple-system, sans-serif;
+	}
+
+	.body-content {
+		padding-top: 0 !important;
+	}
+
+	.detail-hero {
+		background: linear-gradient(135deg, #095e54 0%, #0d7a6e 50%, #20c997 100%);
+		color: #fff;
+		padding: 3rem 0 4rem 0;
+	}
+
+		.detail-hero .breadcrumb {
+			color: rgba(255,255,255,0.8);
+			text-decoration: none;
+			font-size: 0.9rem;
+		}
+
+			.detail-hero .breadcrumb:hover {
+				color: #fff;
+			}
+
+		.detail-hero h1 {
+			font-size: 2.2rem;
+			font-weight: 800;
+			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.detail-hero p {
+			font-size: 1.1rem;
+			opacity: 0.9;
+		}
+
+	.detail-card {
+		background: #fff;
+		border-radius: 1rem;
+		padding: 2rem;
+		border: 1px solid #eae7e0;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+		margin-top: -2rem;
+		position: relative;
+		z-index: 10;
+	}
+
+	.info-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid #f0f2f5;
+	}
+
+		.info-row:last-child {
+			border-bottom: none;
+		}
+
+	.info-label {
+		color: #5a6571;
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.info-value {
+		font-weight: 700;
+		color: #1a2733;
+		text-align: right;
+		max-width: 60%;
+	}
+
+	.steps-list {
+		margin-top: 1.5rem;
+	}
+
+		.steps-list h4 {
+			font-weight: 800;
+			margin-bottom: 1rem;
+		}
+
+	.step {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+		padding: 1rem 0;
+		border-bottom: 1px solid #f0f2f5;
+	}
+
+		.step:last-child {
+			border-bottom: none;
+		}
+
+		.step .num {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #0d7a6e;
+			color: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 800;
+			flex-shrink: 0;
+			font-size: 0.9rem;
+		}
+
+		.step .text {
+			padding-top: 0.35rem;
+			color: #1a2733;
+			font-weight: 500;
+		}
+
+	.outcome-box {
+		background: #f0f7f4;
+		border: 1px solid #cce5e2;
+		border-left: 5px solid #0d7a6e;
+		border-radius: 0.5rem;
+		padding: 1.25rem 1.5rem;
+		margin-top: 2rem;
+	}
+
+		.outcome-box h5 {
+			font-weight: 800;
+			color: #0d7a6e;
+			margin-bottom: 0.5rem;
+		}
+
+	.cta-box {
+		background: #fff8eb;
+		border: 1px solid #f5e0b8;
+		border-radius: 0.5rem;
+		padding: 1.25rem 1.5rem;
+		margin-top: 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+		.cta-box p {
+			margin: 0;
+			color: #856404;
+			font-weight: 600;
+		}
+</style>
+
+<section class="detail-hero">
+	<div class="container">
+		<a href="@Url.Action("Index", "PlanB")" class="breadcrumb">&larr; Back to all Plan B pathways</a>
+		<h1>@title</h1>
+		<p>@subtitle</p>
+	</div>
+</section>
+
+<div class="container pb-5">
+	<div class="detail-card">
+		<h4 class="fw-bold mb-3">What it is</h4>
+		<p class="text-muted" style="font-size: 1rem; line-height: 1.6;">@whatItIs</p>
+
+		<div class="mt-4">
+			<div class="info-row">
+				<span class="info-label">Time</span>
+				<span class="info-value">@time</span>
+			</div>
+			<div class="info-row">
+				<span class="info-label">Cost</span>
+				<span class="info-value">@cost</span>
+			</div>
+		</div>
+
+		<div class="steps-list">
+			<h4>Step-by-step route</h4>
+			@for (int i = 0; i < steps.Length; i++)
+			{
+				<div class="step">
+					<div class="num">@(i + 1)</div>
+					<div class="text">@steps[i]</div>
+				</div>
+			}
+		</div>
+
+		<div class="outcome-box">
+			<h5>Outcome</h5>
+			<p class="mb-0" style="color: #1a2733;">@outcome</p>
+		</div>
+
+		<div class="cta-box">
+			<p>@cta</p>
+			@if (route == "tvet" || route == "certificate")
+			{
+				<a href="@Url.Action("Index", "Programmes", new { qualificationType = (route == "tvet" ? "N4-N6" : "Higher Certificate") })"
+				   class="btn btn-success fw-bold" style="background: #0d7a6e;">Browse @(route == "tvet" ? "TVET" : "Certificate") programmes</a>
+			}
+			else if (route == "extended")
+			{
+				<a href="@Url.Action("Index", "Programmes")" class="btn btn-success fw-bold" style="background: #0d7a6e;">Browse Programmes</a>
+			}
+			else
+			{
+				<a href="https://www.education.gov.za" target="_blank" rel="noopener noreferrer" class="btn btn-success fw-bold" style="background: #0d7a6e;">Visit education.gov.za</a>
+			}
+		</div>
+	</div>
+</div>

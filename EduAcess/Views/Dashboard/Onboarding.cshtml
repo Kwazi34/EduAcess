@@ -1,0 +1,855 @@
+﻿@{
+	ViewBag.Title = "Study Passport";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var provinces = new List<string> { "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo", "Mpumalanga", "North West", "Northern Cape", "Western Cape" };
+	var standardSubjects = new List<string> {
+		"English Home Language", "English First Additional Language",
+		"isiZulu Home Language", "isiZulu First Additional Language",
+		"isiXhosa Home Language", "isiXhosa First Additional Language",
+		"Afrikaans Home Language", "Afrikaans First Additional Language",
+		"Sepedi Home Language", "Setswana Home Language", "Sesotho Home Language",
+		"Mathematics", "Mathematical Literacy", "Technical Mathematics",
+		"Physical Sciences", "Life Sciences", "Agricultural Sciences",
+		"Accounting", "Business Studies", "Economics", "Geography", "History",
+		"Tourism", "Consumer Studies", "Life Orientation",
+		"Information Technology", "Computer Applications Technology",
+		"Engineering Graphics and Design", "Visual Arts", "Dramatic Arts", "Music"
+	};
+}
+
+<style>
+	body {
+		background-color: #f4f7f6;
+	}
+
+	.passport-wrapper {
+		display: flex;
+		gap: 2rem;
+		max-width: 1100px;
+		margin: 2rem auto;
+		align-items: flex-start;
+		padding: 0 1rem;
+	}
+
+	.passport-sidebar {
+		flex: 0 0 300px;
+		background: #ffffff;
+		border-radius: 0.5rem;
+		border: 1px solid #eae7e0;
+		overflow: hidden;
+		box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+	}
+
+	.sidebar-header {
+		background: #0f172a;
+		padding: 1.5rem;
+		color: white;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+		.sidebar-header h5 {
+			margin: 0;
+			font-size: 1rem;
+			font-weight: 700;
+		}
+
+	.progress-circle {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		border: 3px solid #334155;
+		border-top-color: #fbbf24;
+		animation: spin 1s linear infinite;
+		display: none;
+	}
+
+	@@keyframes spin {
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+	.sidebar-steps {
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.step-item {
+		display: flex;
+		gap: 1rem;
+		opacity: 0.5;
+		transition: 0.3s;
+	}
+
+		.step-item.active {
+			opacity: 1;
+		}
+
+	.step-icon {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		border: 2px solid #cbd5e1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		font-size: 0.7rem;
+	}
+
+	.step-item.active .step-icon {
+		border-color: #0d7a6e;
+		color: #0d7a6e;
+	}
+
+	.step-text h6 {
+		margin: 0;
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: #1e293b;
+	}
+
+	.step-text p {
+		margin: 0;
+		font-size: 0.75rem;
+		color: #64748b;
+	}
+
+	.passport-progress {
+		padding: 0 1.5rem 1.5rem 1.5rem;
+	}
+
+	.progress-bar-container {
+		background: #f1f5f9;
+		border-radius: 999px;
+		height: 6px;
+		overflow: hidden;
+		margin-top: 0.5rem;
+	}
+
+	.progress-bar-fill {
+		background: #0d7a6e;
+		height: 100%;
+		width: 0%;
+		transition: 0.4s ease;
+	}
+
+	.privacy-card {
+		background: #f8fafc;
+		margin: 0 1.5rem 1rem 1.5rem;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		font-size: 0.75rem;
+		color: #64748b;
+		text-align: center;
+	}
+
+	.btn-delete-data {
+		background: white;
+		border: 1px solid #e2e8f0;
+		padding: 0.4rem;
+		border-radius: 0.25rem;
+		color: #ef4444;
+		font-weight: 600;
+		width: 100%;
+		margin-top: 0.5rem;
+		cursor: pointer;
+	}
+
+	.btn-share {
+		background: #0d7a6e;
+		color: white;
+		border: none;
+		padding: 0.6rem;
+		border-radius: 0.375rem;
+		font-weight: 600;
+		width: 100%;
+		margin-top: 0.5rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+	}
+
+		.btn-share:hover {
+			background: #095e54;
+		}
+
+	.passport-content {
+		flex: 1;
+		background: #ffffff;
+		border-radius: 0.5rem;
+		border: 1px solid #eae7e0;
+		padding: 3rem;
+		min-height: 500px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.step-pane {
+		display: none;
+		animation: fadeIn 0.4s ease;
+	}
+
+		.step-pane.active {
+			display: block;
+		}
+
+	@@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.step-header {
+		margin-bottom: 2rem;
+	}
+
+		.step-header small {
+			color: #0d7a6e;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			font-size: 0.75rem;
+		}
+
+		.step-header h2 {
+			font-size: 2rem;
+			font-weight: 800;
+			color: #0f172a;
+			margin: 0.5rem 0;
+		}
+
+		.step-header p {
+			color: #64748b;
+			font-size: 0.95rem;
+		}
+
+	.form-group-custom {
+		margin-bottom: 1.5rem;
+	}
+
+		.form-group-custom label {
+			font-weight: 600;
+			color: #1e293b;
+			font-size: 0.9rem;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
+
+	.form-control-custom {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		font-size: 0.95rem;
+		border: 1px solid #cbd5e1;
+		border-radius: 0.375rem;
+		background-color: #f8fafc;
+		transition: 0.2s;
+	}
+
+		.form-control-custom:focus {
+			background-color: #ffffff;
+			border-color: #0d7a6e;
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(13, 122, 110, 0.1);
+		}
+
+	.toggle-group {
+		display: flex;
+		background: #f1f5f9;
+		border-radius: 0.375rem;
+		padding: 0.25rem;
+	}
+
+	.toggle-btn {
+		flex: 1;
+		text-align: center;
+		padding: 0.6rem;
+		border-radius: 0.25rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: #64748b;
+		cursor: pointer;
+		transition: 0.2s;
+		user-select: none;
+	}
+
+		.toggle-btn.active {
+			background: #0d7a6e;
+			color: white;
+		}
+
+	.subject-row {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		margin-bottom: 0.75rem;
+	}
+
+		.subject-row input[type="text"] {
+			flex: 3;
+		}
+
+		.subject-row input[type="number"] {
+			flex: 1;
+			max-width: 100px;
+		}
+
+		.subject-row button {
+			background: none;
+			border: none;
+			color: #94a3b8;
+			font-size: 1.2rem;
+			cursor: pointer;
+			padding: 0.5rem;
+		}
+
+			.subject-row button:hover {
+				color: #ef4444;
+			}
+
+	.add-subject-btn {
+		background: none;
+		border: 1px dashed #cbd5e1;
+		color: #0d7a6e;
+		font-weight: 600;
+		width: 100%;
+		padding: 0.75rem;
+		border-radius: 0.375rem;
+		margin-top: 0.5rem;
+		cursor: pointer;
+	}
+
+	.aps-display {
+		margin-top: 2rem;
+		background: #f8fafc;
+		border: 1px solid #e2e8f0;
+		border-radius: 0.5rem;
+		padding: 1.5rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+		.aps-display h4 {
+			margin: 0;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: #1e293b;
+		}
+
+	.aps-number {
+		font-size: 2rem;
+		font-weight: 800;
+		color: #0d7a6e;
+		line-height: 1;
+	}
+
+	.interest-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.interest-pill {
+		background: #f1f5f9;
+		padding: 0.4rem 0.8rem;
+		border-radius: 999px;
+		font-size: 0.85rem;
+		color: #475569;
+		cursor: pointer;
+		border: 1px solid transparent;
+		transition: 0.2s;
+		user-select: none;
+	}
+
+		.interest-pill.active {
+			background: #e6f2f0;
+			border-color: #0d7a6e;
+			color: #0d7a6e;
+			font-weight: 600;
+		}
+
+	.step-actions {
+		margin-top: auto;
+		padding-top: 2rem;
+		display: flex;
+		gap: 1rem;
+	}
+
+	.btn-back {
+		background: white;
+		border: 1px solid #cbd5e1;
+		color: #475569;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.375rem;
+		font-weight: 600;
+	}
+
+	.btn-next {
+		background: #0f172a;
+		color: white;
+		padding: 0.75rem 2rem;
+		border-radius: 0.375rem;
+		font-weight: 600;
+		flex: 1;
+		border: none;
+		transition: background 0.2s;
+	}
+
+		.btn-next:hover {
+			background: #1e293b;
+		}
+
+		.btn-next:disabled {
+			opacity: 0.7;
+			cursor: wait;
+		}
+
+	.summary-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.summary-row {
+		display: flex;
+		justify-content: space-between;
+		border-bottom: 1px solid #e2e8f0;
+		padding-bottom: 0.75rem;
+	}
+
+		.summary-row span {
+			font-size: 0.9rem;
+			color: #64748b;
+		}
+
+		.summary-row strong {
+			font-size: 0.95rem;
+			color: #1e293b;
+			font-weight: 600;
+		}
+
+	input[list]::-webkit-calendar-picker-indicator {
+		display: none !important;
+	}
+</style>
+
+<datalist id="subjectList">
+	@foreach (var subject in standardSubjects)
+	{
+		<option value="@subject"></option>
+}
+</datalist>
+
+<div class="passport-wrapper">
+	<div class="passport-sidebar">
+		<div class="sidebar-header">
+			<h5>Study passport</h5>
+			<div class="progress-circle" id="headerSpinner"></div>
+		</div>
+		<div class="sidebar-steps">
+			<div class="step-item active" id="side-step-1"><div class="step-icon">1</div><div class="step-text"><h6>Grade 12</h6><p>Grade</p></div></div>
+			<div class="step-item" id="side-step-2"><div class="step-icon">2</div><div class="step-text"><h6 id="text-age">Under 18</h6><p>Age range</p></div></div>
+			<div class="step-item" id="side-step-3"><div class="step-icon">3</div><div class="step-text"><h6 id="text-lang">Not set</h6><p>Home language</p></div></div>
+			<div class="step-item" id="side-step-4"><div class="step-icon">4</div><div class="step-text"><h6 id="text-prov">Not set</h6><p>Province</p></div></div>
+			<div class="step-item" id="side-step-5"><div class="step-icon">5</div><div class="step-text"><h6 id="text-aps">Unlocks with your marks</h6><p>APS score</p></div></div>
+			<div class="step-item" id="side-step-6"><div class="step-icon">6</div><div class="step-text"><h6>Unlocks with income</h6><p>Funding check</p></div></div>
+		</div>
+		<div class="passport-progress">
+			<div class="d-flex justify-content-between align-items-center small text-muted">
+				<span>Passport complete</span>
+				<strong id="progressText">0%</strong>
+			</div>
+			<div class="progress-bar-container"><div class="progress-bar-fill" id="progressFill"></div></div>
+		</div>
+		<div style="padding: 0 1.5rem;">
+			<button class="btn-share" onclick="sharePassport()">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					<path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
+				</svg>
+				Share My Passport
+			</button>
+		</div>
+		<div class="privacy-card" style="margin-top: 1rem;">
+			Your marks stay on this phone. We collect as little as we can, and we never ask for your ID number.
+			<button class="btn-delete-data" onclick="localStorage.clear(); location.reload();">Delete my data</button>
+		</div>
+	</div>
+
+	<div class="passport-content">
+		<div class="step-pane active" id="pane-1">
+			<div class="step-header"><small>Step 1 of 3</small><h2>Tell us about you</h2><p>Takes 2 minutes. No account needed.</p></div>
+			<div class="row">
+				<div class="col-md-6 form-group-custom">
+					<label>Your grade</label>
+					<select class="form-control-custom" id="inputGrade"><option>Grade 12</option><option>Grade 11</option><option>Grade 10</option></select>
+				</div>
+				<div class="col-md-6 form-group-custom">
+					<label>Your age</label>
+					<div class="toggle-group" id="ageGroup">
+						<div class="toggle-btn active" onclick="setAge(this, 'under18')">Under 18</div>
+						<div class="toggle-btn" onclick="setAge(this, 'over18')">18 and over</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6 form-group-custom">
+					<label>Gender</label>
+					<div class="toggle-group" id="genderGroup">
+						<div class="toggle-btn active" onclick="setGender(this, 'Female')">Female</div>
+						<div class="toggle-btn" onclick="setGender(this, 'Male')">Male</div>
+						<div class="toggle-btn" onclick="setGender(this, 'Other')">Other</div>
+					</div>
+				</div>
+				<div class="col-md-6 form-group-custom">
+					<label>Home language</label>
+					<select class="form-control-custom" id="inputLanguage">
+						<option value="">Choose one</option>
+						<option>isiZulu</option>
+						<option>isiXhosa</option>
+						<option>Afrikaans</option>
+						<option>English</option>
+						<option>Sepedi</option>
+						<option>Setswana</option>
+						<option>Sesotho</option>
+						<option>Xitsonga</option>
+						<option>siSwati</option>
+						<option>Tshivenda</option>
+						<option>isiNdebele</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6 form-group-custom">
+					<label>Province</label>
+					<select class="form-control-custom" id="inputProvince">
+						<option value="">Select a province</option>
+						@foreach (var p in provinces)
+						{
+							<option value="@p">@p</option>
+}
+					</select>
+				</div>
+			</div>
+			<div class="step-actions"><button class="btn-next" onclick="goToStep(2)">Next</button></div>
+		</div>
+
+		<div class="step-pane" id="pane-2">
+			<div class="step-header"><small>Step 2 of 3</small><h2>Your marks</h2><p>Search and select subjects. Remove any you don't take.</p></div>
+			<div id="subjectListContainer"></div>
+			<button class="add-subject-btn" onclick="addSubjectRow()">+ Add a subject</button>
+			<div class="aps-display">
+				<div><h4>Your APS (best 6 subjects)</h4><small class="text-muted">Life Orientation is excluded</small></div>
+				<div class="aps-number" id="liveAps">0</div>
+			</div>
+			<div class="step-actions"><button class="btn-back" onclick="goToStep(1)">Back</button><button class="btn-next" onclick="goToStep(3)">Next</button></div>
+		</div>
+
+		<div class="step-pane" id="pane-3">
+			<div class="step-header"><small>Step 3 of 3</small><h2>Money and interests</h2><p>We use this only to check funding. It never leaves your phone.</p></div>
+			<div class="form-group-custom">
+				<label>Household income (per year)</label>
+				<div class="toggle-group" id="incomeGroup">
+					<div class="toggle-btn active" onclick="setIncome(this, 'Under R350k')">Under R350k</div>
+					<div class="toggle-btn" onclick="setIncome(this, 'R350k to R600k')">R350k to R600k</div>
+					<div class="toggle-btn" onclick="setIncome(this, 'Not sure')">Not sure</div>
+				</div>
+			</div>
+			<div class="form-group-custom">
+				<label>Are you a South African citizen?</label>
+				<div class="toggle-group" id="citizenGroup">
+					<div class="toggle-btn active" onclick="setCitizenship(this, true)">Yes</div>
+					<div class="toggle-btn" onclick="setCitizenship(this, false)">No</div>
+				</div>
+			</div>
+			<div class="form-group-custom">
+				<label>What interests you? Pick all that fit.</label>
+				<div class="interest-grid" id="interestContainer">
+					<div class="interest-pill active">Business</div><div class="interest-pill active">Technology</div><div class="interest-pill">Health</div><div class="interest-pill">Teaching</div><div class="interest-pill">Engineering</div><div class="interest-pill">Law</div><div class="interest-pill">Creative arts</div><div class="interest-pill">Agriculture</div>
+				</div>
+			</div>
+			<div class="step-actions"><button class="btn-back" onclick="goToStep(2)">Back</button><button class="btn-next" onclick="finishFlow()">Finish</button></div>
+		</div>
+
+		<div class="step-pane" id="pane-4">
+			<div class="step-header text-center" style="margin-bottom: 1rem;"><small>ALL DONE</small><h2>Your profile is ready</h2><p>Saved to our servers. You can change it any time.</p></div>
+			<div class="summary-grid">
+				<div class="summary-row"><span>Your APS (best 6 subjects)</span><strong id="summaryAps">0</strong></div>
+				<div class="summary-row"><span>Subjects counted</span><strong id="summarySubjectCount">0</strong></div>
+				<div class="summary-row"><span>Marks type</span><strong>Final</strong></div>
+				<div class="summary-row"><span>Interests</span><strong id="summaryInterests">None</strong></div>
+			</div>
+			<div class="mt-4"><button class="btn-back" onclick="goToStep(1)">Edit</button></div>
+			<div class="text-center mt-5">
+				<button class="btn-next mt-2" id="saveBtn" onclick="triggerDatabaseSave()" style="max-width: 300px; margin: 0 auto; width: 100%;">Save & Go to Dashboard</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@using (Html.BeginForm("SavePassportForm", "Dashboard", FormMethod.Post, new { id = "passportForm", style = "display:none;" }))
+{
+	@Html.AntiForgeryToken()
+	<input type="hidden" name="Income" id="hiddenIncome" />
+	<input type="hidden" name="SubjectsJson" id="hiddenSubjectsJson" />
+	<input type="hidden" name="Interests" id="hiddenInterests" />
+	<input type="hidden" name="Gender" id="hiddenGender" />
+	<input type="hidden" name="Language" id="hiddenLanguage" />
+	<input type="hidden" name="Province" id="hiddenProvince" />
+	<input type="hidden" name="AgeGroup" id="hiddenAgeGroup" />
+}
+
+@section Scripts {
+	<script>
+		let state = {
+			ageGroup: 'under18', gender: 'Female', language: '', province: '', income: 'Under R350k', isCitizen: true,
+			subjects: [
+				{ name: 'English Home Language', mark: 0 }, { name: 'Mathematics', mark: 0 },
+				{ name: 'Physical Sciences', mark: 0 }, { name: 'Life Orientation', mark: 0 }
+			],
+			hasSavedData: false
+		};
+
+		document.addEventListener("DOMContentLoaded", async () => {
+			let dataLoaded = false;
+
+			// 1. Try loading from database
+			try {
+				const response = await fetch('/Dashboard/GetPassportData');
+				const dbData = await response.json();
+
+				if (dbData.success) {
+					state.subjects = dbData.subjects.map(s => ({ name: s.name, mark: s.mark }));
+					state.income = dbData.income;
+					state.interests = dbData.interests;
+					state.gender = dbData.gender;
+					state.language = dbData.language;
+					state.province = dbData.province;
+					state.ageGroup = dbData.ageGroup;
+					state.hasSavedData = true;
+					dataLoaded = true;
+				}
+			} catch (e) { console.log("Could not load from DB."); }
+
+			// 2. Fallback to localStorage
+			if (!dataLoaded) {
+				const saved = localStorage.getItem('eduAccessPassport');
+				if (saved) {
+					try {
+						const parsed = JSON.parse(saved);
+						state = { ...state, ...parsed };
+						if (state.subjects && state.subjects.length > 0) state.hasSavedData = true;
+					} catch (err) { console.error(err); }
+				}
+			}
+
+			// 3. Populate the UI
+			restoreUI();
+
+			// 4. If they have saved data, jump to step 4
+			if (state.hasSavedData) {
+				goToStep(4);
+				document.getElementById('summaryAps').innerText = calculateAPS();
+				document.getElementById('summarySubjectCount').innerText = state.subjects.filter(s => s.mark > 0 && s.name).length;
+				document.getElementById('summaryInterests').innerText = state.interests || 'None selected';
+			}
+		});
+
+		function restoreUI() {
+			if (state.language) document.getElementById('inputLanguage').value = state.language;
+			if (state.province) document.getElementById('inputProvince').value = state.province;
+
+			// Restore Age Toggle
+			const ageBtns = document.getElementById('ageGroup').querySelectorAll('.toggle-btn');
+			ageBtns.forEach(b => {
+				b.classList.remove('active');
+				if (state.ageGroup === 'over18' && b.innerText.includes('18 and over')) b.classList.add('active');
+				if (state.ageGroup === 'under18' && b.innerText.includes('Under 18')) b.classList.add('active');
+			});
+
+			// Restore Gender Toggle
+			if (state.gender) {
+				const genderBtns = document.getElementById('genderGroup').querySelectorAll('.toggle-btn');
+				genderBtns.forEach(b => {
+					b.classList.remove('active');
+					if (b.innerText === state.gender) b.classList.add('active');
+				});
+			}
+
+			// Restore Income Toggle
+			if (state.income) {
+				const incomeBtns = document.getElementById('incomeGroup').querySelectorAll('.toggle-btn');
+				incomeBtns.forEach(b => {
+					b.classList.remove('active');
+					if (b.innerText === state.income) b.classList.add('active');
+				});
+			}
+
+			// Restore Interests
+			if (state.interests) {
+				document.querySelectorAll('.interest-pill').forEach(p => p.classList.remove('active'));
+				state.interests.split(',').forEach(i => {
+					const pill = Array.from(document.querySelectorAll('.interest-pill')).find(p => p.innerText.trim() === i.trim());
+					if (pill) pill.classList.add('active');
+				});
+			}
+
+			renderSubjects();
+			updateSidebar();
+		}
+
+		function saveProgress() {
+			localStorage.setItem('eduAccessPassport', JSON.stringify(state));
+			updateSidebar();
+		}
+
+		function goToStep(step) {
+			if (step === 2) {
+				state.language = document.getElementById('inputLanguage').value;
+				state.province = document.getElementById('inputProvince').value;
+			}
+			document.querySelectorAll('.step-pane').forEach(el => el.classList.remove('active'));
+			document.getElementById('pane-' + step).classList.add('active');
+
+			let pct = step === 4 ? 100 : (step - 1) * 33.3;
+			document.getElementById('progressFill').style.width = pct + "%";
+			document.getElementById('progressText').innerText = Math.round(pct) + "%";
+
+			document.querySelectorAll('.step-item').forEach((el, idx) => {
+				if (idx < step) el.classList.add('completed');
+				else el.classList.remove('completed');
+				if (idx === step - 1) el.classList.add('active');
+				else el.classList.remove('active');
+			});
+
+			saveProgress();
+		}
+
+		function setAge(el, val) {
+			el.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+			el.classList.add('active');
+			state.ageGroup = val;
+			saveProgress();
+		}
+
+		function setGender(el, val) {
+			el.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+			el.classList.add('active');
+			state.gender = val;
+			saveProgress();
+		}
+
+		function renderSubjects() {
+			const container = document.getElementById('subjectListContainer');
+			container.innerHTML = '';
+			state.subjects.forEach((sub, index) => {
+				const row = document.createElement('div'); row.className = 'subject-row';
+				const nameInput = document.createElement('input'); nameInput.type = 'text'; nameInput.className = 'form-control-custom'; nameInput.value = sub.name; nameInput.setAttribute('list', 'subjectList'); nameInput.placeholder = 'Search subject...'; nameInput.onchange = (e) => updateSubject(index, 'name', e.target.value);
+				const markInput = document.createElement('input'); markInput.type = 'number'; markInput.className = 'form-control-custom'; markInput.value = sub.mark; markInput.min = 0; markInput.max = 100; markInput.placeholder = '%'; markInput.oninput = (e) => updateSubject(index, 'mark', e.target.value);
+				const removeBtn = document.createElement('button'); removeBtn.innerHTML = '&times;'; removeBtn.type = 'button'; removeBtn.onclick = () => removeSubject(index);
+				row.appendChild(nameInput); row.appendChild(markInput); row.appendChild(removeBtn); container.appendChild(row);
+			});
+			calculateAPS();
+		}
+
+		function updateSubject(index, key, val) {
+			state.subjects[index][key] = key === 'mark' ? Math.min(100, Math.max(0, parseInt(val) || 0)) : val;
+			if (key === 'mark') calculateAPS();
+			saveProgress();
+		}
+
+		function addSubjectRow() { state.subjects.push({ name: '', mark: 0 }); renderSubjects(); }
+		function removeSubject(index) { state.subjects.splice(index, 1); renderSubjects(); saveProgress(); }
+
+		function calculateAPS() {
+			let marks = state.subjects.filter(s => s.name && !s.name.toLowerCase().includes('life orientation')).map(s => parseInt(s.mark) || 0).filter(m => m > 0);
+			marks.sort((a, b) => b - a);
+			let bestSix = marks.slice(0, 6);
+			let aps = 0;
+			bestSix.forEach(m => { if (m >= 80) aps += 7; else if (m >= 70) aps += 6; else if (m >= 60) aps += 5; else if (m >= 50) aps += 4; else if (m >= 40) aps += 3; else if (m >= 30) aps += 2; else if (m > 0) aps += 1; });
+			document.getElementById('liveAps').innerText = aps;
+			return aps;
+		}
+
+		function setIncome(el, val) {
+			el.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+			el.classList.add('active');
+			state.income = val;
+			saveProgress();
+		}
+
+		function setCitizenship(el, val) {
+			el.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+			el.classList.add('active');
+			state.isCitizen = val;
+			saveProgress();
+		}
+
+		document.querySelectorAll('.interest-pill').forEach(pill => { pill.addEventListener('click', function () { this.classList.toggle('active'); }); });
+
+		function finishFlow() {
+			document.getElementById('summaryAps').innerText = calculateAPS();
+			document.getElementById('summarySubjectCount').innerText = state.subjects.filter(s => s.mark > 0 && s.name).length;
+			document.getElementById('summaryInterests').innerText = Array.from(document.querySelectorAll('.interest-pill.active')).map(p => p.innerText).join(', ') || 'None selected';
+			goToStep(4);
+		}
+
+		function updateSidebar() {
+			document.getElementById('text-age').innerText = state.ageGroup === 'under18' ? 'Under 18' : '18 and over';
+			document.getElementById('text-lang').innerText = state.language || 'Not set';
+			document.getElementById('text-prov').innerText = state.province || 'Not set';
+			let aps = calculateAPS();
+			document.getElementById('text-aps').innerText = aps > 0 ? `APS ${aps}` : 'Unlocks with your marks';
+		}
+
+		function triggerDatabaseSave() {
+			document.getElementById('headerSpinner').style.display = 'block';
+			const btn = document.getElementById('saveBtn');
+			btn.disabled = true;
+			btn.innerText = 'Saving...';
+
+			// Prepare data
+			document.getElementById('hiddenIncome').value = state.income;
+			document.getElementById('hiddenGender').value = state.gender;
+			document.getElementById('hiddenLanguage').value = state.language;
+			document.getElementById('hiddenProvince').value = state.province;
+			document.getElementById('hiddenAgeGroup').value = state.ageGroup;
+
+			const interests = Array.from(document.querySelectorAll('.interest-pill.active')).map(p => p.innerText).join(', ');
+			document.getElementById('hiddenInterests').value = interests;
+
+			const validSubjects = state.subjects
+				.filter(s => s.name && s.name.trim() !== '')
+				.map(s => ({ Name: s.name.trim(), Mark: parseInt(s.mark) || 0 }));
+
+			document.getElementById('hiddenSubjectsJson').value = JSON.stringify(validSubjects);
+
+			document.getElementById('passportForm').submit();
+		}
+
+		function sharePassport() {
+			const link = window.location.origin + '/Dashboard/SharePassport';
+			if (navigator.share) {
+				navigator.share({ title: 'My EduAccess Study Passport', text: 'Check out my Study Passport!', url: link });
+			} else {
+				navigator.clipboard.writeText(link);
+				alert('🔗 Link copied! Share it with your friends:\n' + link);
+			}
+		}
+	</script>
+}

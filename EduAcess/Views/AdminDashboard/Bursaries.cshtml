@@ -1,0 +1,311 @@
+﻿@model IEnumerable<EduAcess.Models.Bursary>
+@{
+	ViewBag.Title = "Bursaries";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+	// Counts for the summary cards
+	var totalCount = Model.Count();
+	var openCount = Model.Count(b => b.OpeningDate.HasValue && b.OpeningDate <= DateTime.Now &&
+									 (!b.ClosingDate.HasValue || b.ClosingDate >= DateTime.Now));
+	var upcomingCount = Model.Count(b => b.OpeningDate.HasValue && b.OpeningDate > DateTime.Now);
+	var closedCount = Model.Count(b => b.ClosingDate.HasValue && b.ClosingDate < DateTime.Now);
+}
+
+<style>
+	.admin-table-card {
+		background: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		overflow: hidden;
+	}
+
+	.admin-table-header {
+		padding: 1.25rem 1.5rem;
+		border-bottom: 1px solid #e6e9ee;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+		.admin-table-header h5 {
+			margin: 0;
+			font-weight: 700;
+			color: #1a2733;
+			font-size: 1.1rem;
+		}
+
+	.filter-controls {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+		.filter-controls input,
+		.filter-controls select {
+			font-size: 0.85rem;
+			border: 1px solid #e6e9ee;
+			border-radius: 0.25rem;
+			padding: 0.35rem 0.75rem;
+		}
+
+		.filter-controls select {
+			width: 160px;
+		}
+
+	.table-custom {
+		margin-bottom: 0;
+	}
+
+		.table-custom th {
+			background-color: #f8f9fb;
+			color: #5a6571;
+			font-weight: 600;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-top: none;
+			border-bottom: 1px solid #e6e9ee;
+			padding: 1rem 1.5rem;
+		}
+
+		.table-custom td {
+			padding: 1rem 1.5rem;
+			vertical-align: middle;
+			border-bottom: 1px solid #f0f2f5;
+			font-size: 0.9rem;
+		}
+
+	.badge-status {
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		display: inline-block;
+	}
+
+		.badge-status.open {
+			background-color: #e6f2f0;
+			color: #0d7a6e;
+		}
+
+		.badge-status.upcoming {
+			background-color: #fff8eb;
+			color: #f5a623;
+		}
+
+		.badge-status.closed {
+			background-color: #fcebe9;
+			color: #e05545;
+		}
+
+	.date-open {
+		color: #0d7a6e;
+		font-weight: 600;
+	}
+
+	.date-close-urgent {
+		color: #e05545;
+		font-weight: 700;
+	}
+
+	.date-close-normal {
+		color: #1a2733;
+		font-weight: 600;
+	}
+
+	.date-muted {
+		color: #a0abb5;
+	}
+
+	.summary-card {
+		background: #ffffff;
+		border: 1px solid #e6e9ee;
+		border-radius: 0.5rem;
+		padding: 1rem 1.25rem;
+		text-align: center;
+	}
+
+	.summary-value {
+		font-size: 1.75rem;
+		font-weight: 800;
+		line-height: 1;
+		margin-bottom: 0.25rem;
+	}
+
+	.summary-label {
+		font-size: 0.8rem;
+		color: #5a6571;
+		font-weight: 500;
+	}
+</style>
+
+<div class="mb-4">
+	<h2 class="fw-bold mb-1" style="color: #1a2733;">Bursaries</h2>
+	<p class="text-muted">View all bursary opportunities, opening dates, and closing dates.</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+	<div class="col-md-3">
+		<div class="summary-card">
+			<div class="summary-value" style="color: #1a2733;">@totalCount</div>
+			<div class="summary-label">Total Bursaries</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="summary-card">
+			<div class="summary-value" style="color: #0d7a6e;">@openCount</div>
+			<div class="summary-label">Open Now</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="summary-card">
+			<div class="summary-value" style="color: #f5a623;">@upcomingCount</div>
+			<div class="summary-label">Opening Soon</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="summary-card">
+			<div class="summary-value" style="color: #e05545;">@closedCount</div>
+			<div class="summary-label">Closed</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<div class="admin-table-card">
+			<div class="admin-table-header">
+				<h5>Bursary Directory (<span id="visibleCount">@Model.Count()</span>)</h5>
+
+				<div class="filter-controls">
+					<select id="statusFilter" class="form-select" onchange="filterTable()">
+						<option value="">All Statuses</option>
+						<option value="Open">Open Now</option>
+						<option value="Upcoming">Opening Soon</option>
+						<option value="Closed">Closed</option>
+					</select>
+					<input type="text" id="searchInput" class="form-control" placeholder="Search bursary or provider..." onkeyup="filterTable()" />
+				</div>
+			</div>
+
+			<div class="table-responsive">
+				<table class="table table-custom table-hover" id="bursariesTable">
+					<thead>
+						<tr>
+							<th>Bursary Name</th>
+							<th>Provider</th>
+							<th>Field of Study</th>
+							<th>Opening Date</th>
+							<th>Closing Date</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model != null && Model.Any())
+						{
+							foreach (var bursary in Model)
+							{
+								// Determine status based on dates (C# logic outside the row markup)
+								string status = "Closed";
+								string badgeClass = "closed";
+								string dateCloseClass = "date-muted";
+
+								if (bursary.OpeningDate.HasValue && bursary.OpeningDate > DateTime.Now)
+								{
+									status = "Upcoming";
+									badgeClass = "upcoming";
+								}
+								else if (bursary.ClosingDate.HasValue && bursary.ClosingDate < DateTime.Now)
+								{
+									status = "Closed";
+									badgeClass = "closed";
+								}
+								else if (bursary.OpeningDate.HasValue && bursary.OpeningDate <= DateTime.Now)
+								{
+									status = "Open";
+									badgeClass = "open";
+
+									if (bursary.ClosingDate.HasValue)
+									{
+										var daysLeft = (bursary.ClosingDate.Value - DateTime.Now).TotalDays;
+										dateCloseClass = daysLeft <= 14 ? "date-close-urgent" : "date-close-normal";
+									}
+								}
+
+								<tr data-status="@status" data-name="@bursary.Name.ToLower()" data-provider="@(bursary.Provider != null ? bursary.Provider.ToLower() : "")">
+									<td class="fw-bold">@bursary.Name</td>
+									<td class="text-muted">@bursary.Provider</td>
+									<td>@bursary.FieldOfStudy</td>
+									<td>
+										@if (bursary.OpeningDate.HasValue)
+										{
+											<span class="date-open">@bursary.OpeningDate.Value.ToString("dd MMM yyyy")</span>
+										}
+										else
+										{
+											<span class="date-muted">N/A</span>
+										}
+									</td>
+									<td>
+										@if (bursary.ClosingDate.HasValue)
+										{
+											<span class="@dateCloseClass">@bursary.ClosingDate.Value.ToString("dd MMM yyyy")</span>
+										}
+										else
+										{
+											<span class="date-muted">Varies</span>
+										}
+									</td>
+									<td>
+										<span class="badge-status @badgeClass">@status</span>
+									</td>
+								</tr>
+							}
+						}
+						else
+						{
+							<tr>
+								<td colspan="6" class="text-center text-muted py-4">No bursaries found in the database.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		function filterTable() {
+			var statusFilter = document.getElementById("statusFilter").value.toUpperCase();
+			var searchFilter = document.getElementById("searchInput").value.toUpperCase();
+			var table = document.getElementById("bursariesTable");
+			var tr = table.getElementsByTagName("tr");
+			var visibleCount = 0;
+
+			for (var i = 1; i < tr.length; i++) {
+				var rowStatus = tr[i].getAttribute("data-status");
+				if (!rowStatus) continue;
+
+				var nameText = tr[i].getAttribute("data-name") || "";
+				var providerText = tr[i].getAttribute("data-provider") || "";
+
+				var matchesStatus = (statusFilter === "" || rowStatus.toUpperCase() === statusFilter);
+				var matchesSearch = (searchFilter === "" || nameText.indexOf(searchFilter.toLowerCase()) > -1 || providerText.indexOf(searchFilter.toLowerCase()) > -1);
+
+				if (matchesStatus && matchesSearch) {
+					tr[i].style.display = "";
+					visibleCount++;
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+
+			document.getElementById("visibleCount").innerText = visibleCount;
+		}
+	</script>
+}
